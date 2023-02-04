@@ -3,8 +3,7 @@ class UserIn(BaseModel):
     user_name:str
     password:str
     address:str
-    is_user:bool
-
+    phone_number:str
 
 class UserOut(BaseModel):
     access_token:str
