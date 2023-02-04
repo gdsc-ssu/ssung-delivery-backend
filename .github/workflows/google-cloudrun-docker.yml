@@ -51,7 +51,7 @@ on:
 env:
   PROJECT_ID: 151638391345
   GAR_LOCATION: asia-northeast3
-  SERVICE: ssung-delivery
+  SERVICE: ssung
   REGION: asia-northeast3
 
 jobs:
