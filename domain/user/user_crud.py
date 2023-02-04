@@ -4,6 +4,7 @@ from models import User
 from domain.user import user_schema
 from typing import Union
 
+
 def create_user(session:Session, user_in:user_schema.UserIn) -> None:
     """
     유저 생성을 위한 함수입니다. 유저를 생성해 DB에 추가합니다.

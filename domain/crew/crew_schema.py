@@ -4,3 +4,8 @@ class CrewIn(BaseModel):
     password:str
     area:str
     phone_number:str
+
+class CrewOut(BaseModel):
+    access_token:str
+    token_type:str
+    crewname:str
