@@ -9,14 +9,14 @@ from domain.user import user_crud
 
 router = APIRouter(prefix="/api/user") #url 라우팅
 
-@router.post("/create", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/create", status_code=status.HTTP_204_NO_CONTENT, tags=["users"])
 def user_create(user_in:user_schema.UserIn, session=Depends(create_session)):
     """
     유저를 생성합니다.
 
     Args:
         user_in (user_schema.UserIn): 유저 생성을 위한 입력 형태 (유저 이름, 비밀번호, 주소, 핸드폰 번호)
-        session (_type_, optional): _description_. Defaults to Depends(create_session).
+        session (Session, optional): DB 커넥션을 위한 세션. Defaults to Depends(create_session).
 
     Raises:
         HTTPException: 409에러 이미 유저가 존재
@@ -36,7 +36,7 @@ def user_create(user_in:user_schema.UserIn, session=Depends(create_session)):
         raise HTTPException(status_csode=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@router.post("/login", response_model=user_schema.UserOut)
+@router.post("/login", response_model=user_schema.UserOut, tags=["users"])
 def login_for_access_token(form_data:OAuth2PasswordRequestForm=Depends(), session=Depends(create_session)):
     """
     로그인 토큰을 검증해 로그인을 진행합니다.
