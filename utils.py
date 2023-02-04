@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import jwt
 from typing import Any, Union
-from domain.user.constant import *
+from constant import *
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
