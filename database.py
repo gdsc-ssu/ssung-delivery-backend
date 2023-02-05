@@ -3,10 +3,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from constant import DATABASE_URL
 
-<<<<<<< HEAD
-=======
-DATABASE_URL = "mysql+pymysql://root:kidok0714@localhost:3306/ssung"
->>>>>>> ff999d709a4e631b5df2c28caf5a756682ed192d
 engine = create_engine(DATABASE_URL)
 Base = declarative_base()
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
