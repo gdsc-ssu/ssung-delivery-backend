@@ -1,11 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from constant import DATABASE_URL
+from os import getenv
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(getenv('DATABASE_URL'))
 Base = declarative_base()
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 def create_session():
     """
@@ -23,11 +24,11 @@ def create_session():
         yield session
 
     except Exception as e:
-        session.rollback() #트랜젝션 되돌림
+        session.rollback()  # 트랜젝션 되돌림
         raise e
-    
+
     else:
         session.commit()
-    
+
     finally:
         session.close()

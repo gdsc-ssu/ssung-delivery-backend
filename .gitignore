@@ -1,2 +1,4 @@
 *.pyc
-constant.py
+*.pyo
+*.pyd
+*.env
