@@ -32,7 +32,7 @@ def crew_create(crew_in:crew_schema.CrewIn, session=Depends(create_session)):
         raise e
 
     except Exception as e:
-        raise HTTPException(status_csode=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @router.post("/login", response_model=crew_schema.CrewOut, tags=["crews"])
