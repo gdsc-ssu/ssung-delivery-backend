@@ -38,36 +38,28 @@ create table shippments
         foreign key (user_id) references users (user_id)
 );
 
-
-
 create table users
 (
-    created_at   TIMESTAMP default current_timestamp not null comment '생성시간',
-    modified_at  TIMESTAMP default current_timestamp not null on update current_timestamp comment '변경시간',
-    user_id      BIGINT auto_increment comment '유저 ID',
-    password     VARCHAR(255)                        not null comment '비밀번호',
-    username     VARCHAR(255)                        not null comment '이름',
-    address      JSON                                not null comment '주소',
-    phone_number VARCHAR(255)                        not null comment '전화번호',
-    is_crew      BOOLEAN                             not null comment '유저 롤',
-    constraint PK_USERS
-        primary key (user_id)
+    `id` BIGINT auto_increment PRIMARY KEY comment '유저 ID',
+    `user_name` VARCHAR(255) UNIQUE not null comment '이름',
+    `password` VARCHAR(255) not null comment '비밀번호',
+    `address` VARCHAR(200) not null comment '주소',
+    `phone_number` VARCHAR(255) not null comment '전화번호',
+    `created_at` TIMESTAMP default current_timestamp not null comment '생성시간',
+    `modified_at` TIMESTAMP default current_timestamp not null on update current_timestamp comment '변경시간',
 );
-
 
 
 create table crews
 (
-    created_at   TIMESTAMP default current_timestamp not null comment '생성시간',
-    modified_at  TIMESTAMP default current_timestamp not null on update current_timestamp comment '변경시간',
-    crew_id      BIGINT auto_increment comment '기사 ID'
-        primary key,
-    password     VARCHAR(255)                        not null comment '기사 비밀번호',
-    crew_name    VARCHAR(255)                        not null comment '기사 이름',
-    area         VARCHAR(255)                        not null comment '담당 구역',
-    phone_number VARCHAR(255)                        not null comment '기사 전화번호'
+    `id` BIGINT auto_increment PRIMARY KEY comment '기사 ID',
+    `crew_name` VARCHAR(255) UNIQUE not null comment '기사 이름',
+    `password` VARCHAR(255) not null comment '기사 비밀번호',
+    `area` VARCHAR(255) not null comment '담당 구역',
+    `phone_number` VARCHAR(255) not null comment '기사 전화번호'
+    `created_at` TIMESTAMP default current_timestamp not null comment '생성시간',
+    `modified_at`TIMESTAMP default current_timestamp not null on update current_timestamp comment '변경시간',
 );
-
 
 
 create table shippment_histories
