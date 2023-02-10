@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, MetaData
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql.expression import func
+
 from database import *
 
 
@@ -23,7 +24,6 @@ class Crew(Base):
     phone_number = Column(String(20), nullable=False)
     created_at = Column(DateTime, default=func.now())
     modified_at = Column(DateTime, default=func.now())
-
 
 # if __name__ == '__main__':
 #     Base.metadata.create_all(engine)
