@@ -1,2 +1,7 @@
 *.pyc
-constant.py
+*.pyo
+*.pyd
+*.env
+
+venv
+.idea

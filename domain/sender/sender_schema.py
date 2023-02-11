@@ -1,14 +1,14 @@
 from pydantic import BaseModel
 
 
-class CrewIn(BaseModel):
-    crew_name: str
+class SenderIn(BaseModel):
+    sender_name: str
     password: str
-    area: str
+    address: str
     phone_number: str
 
 
-class CrewOut(BaseModel):
+class SenderOut(BaseModel):
     access_token: str
     token_type: str
-    crew_name: str
+    sender_name: str
