@@ -15,7 +15,7 @@ def create_crew(session: Session, crew_in: crew_schema.CrewIn) -> None:
         session (Session): DB 연결을 위한 세션
         crew_in (Crew_schema.CrewIn): 크루 입력을 위한 검증 스키마
     """
-    crew = Crew(crew_name=crew_in.crew_name, password=get_hash_password(crew_in.password), \
+    crew = Crew(crew_name=crew_in.crew_name, password=get_hash_password(crew_in.password),
                 area=crew_in.area, phone_number=crew_in.phone_number)
 
     session.add(crew)  # DB에 유처 정보를 추가 합니다.

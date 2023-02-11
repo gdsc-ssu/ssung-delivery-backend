@@ -15,7 +15,7 @@ def create_user(session: Session, user_in: user_schema.UserIn) -> None:
         session (Session): DB 연결을 위한 세션
         user_in (user_schema.UserIn): 유저 입력을 위한 검증 스키마
     """
-    user = User(user_name=user_in.user_name, password=get_hash_password(user_in.password), \
+    user = User(user_name=user_in.user_name, password=get_hash_password(user_in.password),
                 address=user_in.address, phone_number=user_in.phone_number)
 
     # session은 컨텍스트 매니저로 원자성 보존
