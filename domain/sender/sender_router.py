@@ -4,31 +4,31 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
 from database import create_session
-from domain.user import user_crud
-from domain.user import user_schema
+from domain.sender import sender_crud
+from domain.sender import sender_schema
 from utils import verify_password, create_access_token
 
-router = APIRouter(prefix="/api/user")  # url 라우팅
+router = APIRouter(prefix="/api/sender")  # url 라우팅
 
 
 @router.post("/create", status_code=status.HTTP_204_NO_CONTENT, tags=["users"])
-def user_create(user_in: user_schema.UserIn, session=Depends(create_session)):
+def sender_create(user_in: sender_schema.SenderIn, session=Depends(create_session)):
     """
     유저를 생성합니다.
 
     Args:
-        user_in (user_schema.UserIn): 유저 생성을 위한 입력 형태 (유저 이름, 비밀번호, 주소, 핸드폰 번호)
+        user_in (sender_schema.SenderIn): 유저 생성을 위한 입력 형태 (유저 이름, 비밀번호, 주소, 핸드폰 번호)
         session (Session, optional): DB 커넥션을 위한 세션. Defaults to Depends(create_session).
 
     Raises:
         HTTPException: 409에러 이미 유저가 존재
     """
     try:
-        user = user_crud.get_user(session, user_in.user_name)
-        if user:
+        sender = sender_crud.get_sender(session, user_in.sender_name)
+        if sender:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already Exists.")
 
-        user_crud.create_user(session=session, user_in=user_in)
+        sender_crud.create_sender(session=session, sender_in=user_in)
 
     except HTTPException as e:
         raise e
@@ -37,7 +37,7 @@ def user_create(user_in: user_schema.UserIn, session=Depends(create_session)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@router.post("/login", response_model=user_schema.UserOut, tags=["users"])
+@router.post("/login", response_model=sender_schema.SenderOut, tags=["senders"])
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(create_session)):
     """
     로그인 토큰을 검증해 로그인을 진행 합니다.
@@ -54,15 +54,15 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), ses
         Userout: User 출력 모델
     """
     try:
-        user = user_crud.get_user(session, form_data.username)
-        if user and verify_password(form_data.password, user.password):
-            access_token = create_access_token(subject=user.user_name)
+        sender = sender_crud.get_sender(session, form_data.username)
+        if sender and verify_password(form_data.password, sender.password):
+            access_token = create_access_token(subject=sender.sender_name)
             return {"access_token": access_token,
                     "token_type": "bearer",
-                    "username": user.user_name
+                    "sender_name": sender.sender_name
                     }
         else:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect sender_name or password")
 
     except Exception:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

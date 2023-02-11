@@ -4,10 +4,10 @@ from sqlalchemy.sql.expression import func
 from database import *
 
 
-class User(Base):
-    __tablename__ = 'users'
+class Sender(Base):
+    __tablename__ = 'senders'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_name = Column(String(30), nullable=False, unique=True)
+    sender_name = Column(String(30), nullable=False, unique=True)
     password = Column(String(200), nullable=False)
     address = Column(String(50), nullable=False)
     phone_number = Column(String(20), nullable=False)

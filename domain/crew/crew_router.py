@@ -33,7 +33,7 @@ def crew_create(crew_in: crew_schema.CrewIn, session=Depends(create_session)):
     except HTTPException as e:
         raise e
 
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

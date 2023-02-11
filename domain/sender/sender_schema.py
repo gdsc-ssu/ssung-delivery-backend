@@ -1,14 +1,14 @@
 from pydantic import BaseModel
 
 
-class UserIn(BaseModel):
-    user_name: str
+class SenderIn(BaseModel):
+    sender_name: str
     password: str
     address: str
     phone_number: str
 
 
-class UserOut(BaseModel):
+class SenderOut(BaseModel):
     access_token: str
     token_type: str
-    username: str
+    sender_name: str

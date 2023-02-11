@@ -11,4 +11,4 @@ class CrewIn(BaseModel):
 class CrewOut(BaseModel):
     access_token: str
     token_type: str
-    crewname: str
+    crew_name: str
