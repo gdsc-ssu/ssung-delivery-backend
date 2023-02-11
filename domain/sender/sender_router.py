@@ -12,23 +12,23 @@ router = APIRouter(prefix="/api/sender")  # url 라우팅
 
 
 @router.post("/create", status_code=status.HTTP_204_NO_CONTENT, tags=["users"])
-def sender_create(user_in: sender_schema.SenderIn, session=Depends(create_session)):
+def sender_create(sender_in: sender_schema.SenderIn, session=Depends(create_session)):
     """
     유저를 생성합니다.
 
     Args:
-        user_in (sender_schema.SenderIn): 유저 생성을 위한 입력 형태 (유저 이름, 비밀번호, 주소, 핸드폰 번호)
+        sender_in (sender_schema.SenderIn): 유저 생성을 위한 입력 형태 (유저 이름, 비밀번호, 주소, 핸드폰 번호)
         session (Session, optional): DB 커넥션을 위한 세션. Defaults to Depends(create_session).
 
     Raises:
         HTTPException: 409에러 이미 유저가 존재
     """
     try:
-        sender = sender_crud.get_sender(session, user_in.sender_name)
+        sender = sender_crud.get_sender(session, sender_in.sender_name)
         if sender:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already Exists.")
 
-        sender_crud.create_sender(session=session, sender_in=user_in)
+        sender_crud.create_sender(session=session, sender_in=sender_in)
 
     except HTTPException as e:
         raise e
