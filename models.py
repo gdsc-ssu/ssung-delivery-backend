@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, BIGINT, Enum, ForeignKey,MetaData
 from sqlalchemy.sql.expression import func
 import enum
-from database import Base, engine
+from database import Base, engine, create_session
 
 class Status(enum.Enum):
     ready = 0
@@ -32,12 +32,12 @@ class Crew(Base):
 
 
 class Shipment(Base):
-    __tablename__ = 'shippments'
+    __tablename__ = 'shipments'
     id = Column(BIGINT, primary_key=True, autoincrement=True)
     content_id = Column(BIGINT, ForeignKey("contents.id"), nullable=False)
     crew_id = Column(Integer, ForeignKey("crews.id"), nullable=False)
     sender_id = Column(Integer, ForeignKey("senders.id"), nullable=False)
-    stats = Column(Enum(Status), default=Status.ready)
+    status = Column(Enum(Status), default=Status.ready)
     location = Column(String(255), nullable=False)
     shipment_detail = Column(String(255), nullable=True) #배송시 주의사항 등
     destination = Column(String(255), nullable=False)
@@ -48,6 +48,7 @@ class Shipment(Base):
 
 
 
-
-if __name__ == '__main__':
-    Base.metadata.create_all(engine)
+# if __name__ == '__main__':
+    # Base.metadata.create_all(engine)
+    # session = create_session()
+    # print(next(session).query(Shipment).all())
