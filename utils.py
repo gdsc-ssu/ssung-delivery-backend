@@ -29,3 +29,11 @@ def create_access_token(subject: Union[str, Any], expires_delta: timedelta = Non
     encoded_jwt = jwt.encode(
         to_encode, settings.JWT_SECRET_KEY, settings.ALGORITHM)
     return encoded_jwt
+
+
+def get_token_subject(token: str) -> str:
+    return jwt.decode(
+        token=token,
+        algorithms=settings.ALGORITHM,
+        key=settings.JWT_SECRET_KEY
+    )["sub"]
