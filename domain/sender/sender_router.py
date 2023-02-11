@@ -11,7 +11,7 @@ from utils import verify_password, create_access_token
 router = APIRouter(prefix="/api/sender")  # url 라우팅
 
 
-@router.post("/create", status_code=status.HTTP_204_NO_CONTENT, tags=["users"])
+@router.post("/create", status_code=status.HTTP_201_CREATED, tags=["users"])
 def sender_create(sender_in: sender_schema.SenderIn, session=Depends(create_session)):
     """
     유저를 생성합니다.
