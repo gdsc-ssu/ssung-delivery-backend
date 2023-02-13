@@ -1,7 +1,9 @@
-from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, BIGINT, Enum, ForeignKey, MetaData, false
-from sqlalchemy.sql.expression import func
 import enum
-from database import Base, engine, create_session
+
+from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, BIGINT, Enum, ForeignKey, false
+from sqlalchemy.sql.expression import func
+
+from database import Base
 
 
 class Status(enum.Enum):
@@ -57,8 +59,7 @@ class Shipment(Base):
     shipment_start_date = Column(TIMESTAMP, default=func.now(), nullable=False)
     shipment_end_date = Column(TIMESTAMP)
 
-
 # if __name__ == '__main__':
-    # Base.metadata.create_all(engine)
-    # session = create_session()
-    # print(next(session).query(Shipment).all())
+# Base.metadata.create_all(engine)
+# session = create_session()
+# print(next(session).query(Shipment).all())

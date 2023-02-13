@@ -1,5 +1,3 @@
-from typing import Union
-
 from sqlalchemy.orm import Session
 
 from domain.sender import sender_schema

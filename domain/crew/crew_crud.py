@@ -1,5 +1,3 @@
-from typing import Union
-
 from sqlalchemy.orm import Session
 
 from domain.crew import crew_schema
