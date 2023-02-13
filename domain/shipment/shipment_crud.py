@@ -1,4 +1,6 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from starlette import status
 
 from domain.crew import crew_crud
 from domain.sender import sender_crud
@@ -50,3 +52,24 @@ def create_shipment(
 
     else:
         session.add(convert_to_model(session, orders, access_token))
+
+
+def delete_shipment(
+        session: Session,
+        access_token: str,
+        shipment_id: int
+):
+    try:
+        query = session.query(Shipment).filter(Shipment.id == shipment_id).first()
+        sender = sender_crud.get_sender(session, get_token_subject(access_token))
+
+        if query is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+        if query.sender_id != sender.id:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT)
+
+        session.delete(query)
+
+    except Exception as e:
+        raise e
