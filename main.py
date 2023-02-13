@@ -3,6 +3,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from domain.crew import crew_router
 from domain.sender import sender_router
+from domain.shipment import shipment_router
 
 app = FastAPI()
 
@@ -20,3 +21,4 @@ app.add_middleware(
 
 app.include_router(sender_router.router)
 app.include_router(crew_router.router)
+app.include_router(shipment_router.router)

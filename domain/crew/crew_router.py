@@ -51,7 +51,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), ses
         HTTPException: 500 서버 에러
 
     Returns:
-        crewout: crew 출력 모델
+        crew_out: crew 출력 모델
     """
     try:
         crew = crew_crud.get_crew(session, form_data.username)
@@ -59,7 +59,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), ses
             access_token = create_access_token(subject=crew.crew_name)
             return {"access_token": access_token,
                     "token_type": "bearer",
-                    "crewname": crew.crew_name
+                    "crew_name": crew.crew_name
                     }
         else:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect crewname or password")
