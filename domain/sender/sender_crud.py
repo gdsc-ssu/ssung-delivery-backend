@@ -15,7 +15,7 @@ def create_sender(session: Session, sender_in: sender_schema.SenderIn) -> None:
         session (Session): DB 연결을 위한 세션
         sender_in (sender_schema.SenderIn): 유저 입력을 위한 검증 스키마
     """
-    sender = Sender(user_name=sender_in.sender_name, password=get_hash_password(sender_in.password),
+    sender = Sender(sender_name=sender_in.sender_name, password=get_hash_password(sender_in.password),
                     address=sender_in.address, phone_number=sender_in.phone_number)
 
     # session은 컨텍스트 매니저로 원자성 보존
