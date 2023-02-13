@@ -22,7 +22,7 @@ def create_sender(session: Session, sender_in: sender_schema.SenderIn) -> None:
     session.add(sender)  # DB에 유처 정보를 추가 합니다.
 
 
-def get_sender(session: Session, sender_name: str) -> Union[Sender, None]:
+def get_sender(session: Session, sender_name: str) -> Sender | None:
     """
     유저 이름을 기반 으로 DB에서 유저 정보를 선택 합니다.
 
