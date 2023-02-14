@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Header, Depends, HTTPException
 from starlette import status
 
@@ -12,7 +14,7 @@ router = APIRouter(prefix="/api/shipment")
 def shipping_order(
         shipment_in: shipment_schema.ShipmentIn | list[shipment_schema.ShipmentIn],
         session=Depends(create_session),
-        access_token: str | None = Header(convert_underscores=False, default=None)
+        access_token: Optional[str] = Header(convert_underscores=False, default=None)
 ):
     try:
         if access_token is None:
@@ -23,6 +25,7 @@ def shipping_order(
             orders=shipment_in,
             access_token=access_token
         )
+        return {"ok": True}
 
     except HTTPException as e:
         raise e
@@ -35,7 +38,7 @@ def shipping_order(
 def shipping_order(
         shipment_id: int,
         session=Depends(create_session),
-        access_token: str | None = Header(convert_underscores=False, default=None)
+        access_token: Optional[str] = Header(convert_underscores=False, default=None)
 ):
     try:
         if access_token is None:

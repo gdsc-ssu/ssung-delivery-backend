@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy.orm import Session
 
 from domain.sender import sender_schema
@@ -20,7 +22,7 @@ def create_sender(session: Session, sender_in: sender_schema.SenderIn) -> None:
     session.add(sender)  # DB에 유처 정보를 추가 합니다.
 
 
-def get_sender(session: Session, sender_name: str) -> Sender | None:
+def get_sender(session: Session, sender_name: str) -> Optional[Sender]:
     """
     유저 이름을 기반 으로 DB에서 유저 정보를 선택 합니다.
 

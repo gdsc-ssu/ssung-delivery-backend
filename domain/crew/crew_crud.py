@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy.orm import Session
 
 from domain.crew import crew_schema
@@ -19,7 +21,7 @@ def create_crew(session: Session, crew_in: crew_schema.CrewIn) -> None:
     session.add(crew)  # DB에 유처 정보를 추가 합니다.
 
 
-def get_crew(session: Session, crew_name: str) -> Crew | None:
+def get_crew(session: Session, crew_name: str) -> Optional[Crew]:
     """
     크루 이름을 기반 으로 DB 에서 크루 정보를 선택 합니다.
 
