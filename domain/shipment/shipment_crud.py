@@ -58,7 +58,14 @@ def delete_shipment(
         session: Session,
         access_token: str,
         shipment_id: int
-):
+) -> None:
+    """
+    배송 주문을 삭제 하는 함수 입니다.
+    Args:
+        session: DB 연결을 위한 세션
+        access_token: 발송자 인증을 위한 토큰
+        shipment_id: 삭제 하려고 하는 주문 ID
+    """
     try:
         query = session.query(Shipment).filter(Shipment.id == shipment_id).first()
         sender = sender_crud.get_sender(session, get_token_subject(access_token))
