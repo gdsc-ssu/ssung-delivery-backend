@@ -3,7 +3,7 @@ from starlette import status
 
 from database import create_session
 from domain.shipment import shipment_schema, shipment_crud
-from domain.shipment.shipment_crud import delete_shipment, convert_to_model
+from domain.shipment.shipment_crud import delete_shipment
 
 router = APIRouter(prefix="/api/shipment")
 
