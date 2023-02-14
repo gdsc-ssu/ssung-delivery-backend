@@ -29,6 +29,7 @@ def crew_create(crew_in: crew_schema.CrewIn, session=Depends(create_session)):
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Crew already Exists.")
 
         crew_crud.create_crew(session=session, crew_in=crew_in)
+        return {"ok": True}
 
     except HTTPException as e:
         raise e

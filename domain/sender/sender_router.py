@@ -29,6 +29,7 @@ def sender_create(sender_in: sender_schema.SenderIn, session=Depends(create_sess
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already Exists.")
 
         sender_crud.create_sender(session=session, sender_in=sender_in)
+        return {"ok": True}
 
     except HTTPException as e:
         raise e
