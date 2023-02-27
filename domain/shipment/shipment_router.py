@@ -1,11 +1,12 @@
-from typing import Optional
-
-from fastapi import APIRouter, Header, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 from starlette import status
 
+from authentication import get_current_sender
 from database import create_session
 from domain.shipment import shipment_schema, shipment_crud
 from domain.shipment.shipment_crud import delete_shipment
+from models import Sender
 
 router = APIRouter(prefix="/api/shipment")
 
@@ -13,18 +14,11 @@ router = APIRouter(prefix="/api/shipment")
 @router.post("/order", status_code=status.HTTP_201_CREATED, tags=['shipments'])
 def shipping_order(
         shipment_in: shipment_schema.ShipmentIn | list[shipment_schema.ShipmentIn],
-        session=Depends(create_session),
-        access_token: Optional[str] = Header(convert_underscores=False, default=None)
+        session: Session = Depends(create_session),
+        sender: Sender = Depends(get_current_sender)
 ):
     try:
-        if access_token is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-        shipment_crud.create_shipment(
-            session=session,
-            orders=shipment_in,
-            access_token=access_token
-        )
+        shipment_crud.create_shipment(session=session, orders=shipment_in, sender=sender)
         return {"ok": True}
 
     except HTTPException as e:
@@ -37,14 +31,11 @@ def shipping_order(
 @router.delete("/cancel/{shipment_id}", tags=['shipments'])
 def shipping_order(
         shipment_id: int,
-        session=Depends(create_session),
-        access_token: Optional[str] = Header(convert_underscores=False, default=None)
+        session: Session = Depends(create_session),
+        sender: Sender = Depends(get_current_sender)
 ):
     try:
-        if access_token is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-        delete_shipment(session, access_token, shipment_id)
+        delete_shipment(session, sender, shipment_id)
         return {"ok": True}
 
     except HTTPException as e:
