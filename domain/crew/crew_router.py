@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
 from starlette import status
 
 from database import create_session
@@ -12,7 +13,10 @@ router = APIRouter(prefix="/api/crew")  # url 라우팅
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED, tags=["crews"])
-def crew_create(crew_in: crew_schema.CrewIn, session=Depends(create_session)):
+def crew_create(
+        crew_in: crew_schema.CrewIn,
+        session: Session = Depends(create_session)
+):
     """
     유저를 생성 합니다.
 
@@ -39,7 +43,10 @@ def crew_create(crew_in: crew_schema.CrewIn, session=Depends(create_session)):
 
 
 @router.post("/login", response_model=crew_schema.CrewOut, tags=["crews"])
-def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(create_session)):
+def login_for_access_token(
+        form_data: OAuth2PasswordRequestForm = Depends(),
+        session: Session = Depends(create_session)
+):
     """
     로그인 토큰을 검증해 로그인을 진행 합니다.
 
@@ -58,10 +65,11 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), ses
         crew = crew_crud.get_crew(session, form_data.username)
         if crew and verify_password(form_data.password, crew.password):
             access_token = create_access_token(subject=crew.crew_name)
-            return {"access_token": access_token,
-                    "token_type": "bearer",
-                    "crew_name": crew.crew_name
-                    }
+            return {
+                "access_token": access_token,
+                "token_type": "bearer",
+                "crew_name": crew.crew_name
+            }
         else:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect crewname or password")
 

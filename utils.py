@@ -36,4 +36,4 @@ def get_token_subject(token: str) -> str:
         token=token,
         algorithms=settings.ALGORITHM,
         key=settings.JWT_SECRET_KEY
-    )["sub"]
+    ).get("sub")

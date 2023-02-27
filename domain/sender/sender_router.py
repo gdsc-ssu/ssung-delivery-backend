@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
 from starlette import status
 
 from database import create_session
@@ -11,8 +12,11 @@ from utils import verify_password, create_access_token
 router = APIRouter(prefix="/api/sender")  # url 라우팅
 
 
-@router.post("/create", status_code=status.HTTP_201_CREATED, tags=["users"])
-def sender_create(sender_in: sender_schema.SenderIn, session=Depends(create_session)):
+@router.post("/create", status_code=status.HTTP_201_CREATED, tags=["senders"])
+def sender_create(
+        sender_in: sender_schema.SenderIn,
+        session: Session = Depends(create_session)
+):
     """
     유저를 생성합니다.
 
@@ -40,7 +44,10 @@ def sender_create(sender_in: sender_schema.SenderIn, session=Depends(create_sess
 
 
 @router.post("/login", response_model=sender_schema.SenderOut, tags=["senders"])
-def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(create_session)):
+def login_for_access_token(
+        form_data: OAuth2PasswordRequestForm = Depends(),
+        session: Session = Depends(create_session)
+):
     """
     로그인 토큰을 검증해 로그인을 진행 합니다.
 
@@ -53,16 +60,17 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), ses
         HTTPException: 500 서버 에러
 
     Returns:
-        Userout: User 출력 모델
+        SenderOut: Sender 출력 모델
     """
     try:
         sender = sender_crud.get_sender(session, form_data.username)
         if sender and verify_password(form_data.password, sender.password):
             access_token = create_access_token(subject=sender.sender_name)
-            return {"access_token": access_token,
-                    "token_type": "bearer",
-                    "sender_name": sender.sender_name
-                    }
+            return {
+                "access_token": access_token,
+                "token_type": "bearer",
+                "sender_name": sender.sender_name
+            }
         else:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect sender_name or password")
 
