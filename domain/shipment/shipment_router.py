@@ -29,7 +29,7 @@ def shipping_order(
 
 
 @router.delete("/cancel/{shipment_id}", tags=['shipments'])
-def shipping_order(
+def shipping_delete(
         shipment_id: int,
         session: Session = Depends(create_session),
         sender: Sender = Depends(get_current_sender)
