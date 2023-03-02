@@ -22,7 +22,7 @@ sender_scheme = OAuth2PasswordBearer(tokenUrl="/api/sender/login")
 crew_scheme = OAuth2PasswordBearer(tokenUrl="/api/crew/login")
 
 
-def get_current_entity(
+def get_auth_entity(
         get_entity: Callable[[Session, str], Sender | Crew | None],
         token: str,
         session: Session,
@@ -35,22 +35,22 @@ def get_current_entity(
     except JWTError:
         raise credentials_exception
 
-    sender = get_entity(session, username)
-    if sender is None:
+    entity = get_entity(session, username)
+    if entity is None:
         raise credentials_exception
 
-    return sender
+    return entity
 
 
-def get_current_sender(
+def get_auth_sender(
         token: str = Depends(sender_scheme),
         session: Session = Depends(create_session),
 ) -> Sender:
-    return get_current_entity(get_sender, token, session)
+    return get_auth_entity(get_sender, token, session)
 
 
-def get_current_crew(
+def get_auth_crew(
         token: str = Depends(crew_scheme),
         session: Session = Depends(create_session),
 ) -> Crew:
-    return get_current_entity(get_crew, token, session)
+    return get_auth_entity(get_crew, token, session)

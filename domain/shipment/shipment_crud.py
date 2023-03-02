@@ -75,3 +75,55 @@ def delete_shipment(
 
     except Exception as e:
         raise e
+
+
+def mask_name(name:str) -> str:
+    return "*" + name[1:] #성 마스킹
+
+
+def mask_phone_num(phone_number:str) -> str:
+    num_list = phone_number.split("-")
+    num_list[-1] = "****" #끝에 4자리 마스킹
+    return '-'.join(num_list)
+
+
+def mask_destination(destination:str) -> str:
+    det_list = destination.split()
+    do_mask = lambda x: len(x) * "*"
+    maksed_address= [do_mask(address) for address in det_list]
+    return ' '.join(det_list[:2] + (maksed_address)) #상세 주소 전부 마스킹 처리
+    
+
+def mask_shipment(shipment:Shipment) -> dict:
+    """
+    부분 정보 제공을 위한 마스킹을 실시합니다
+
+    Args:
+        shipment (Shipment): 배송 정보
+
+    Returns:
+        dict: ShipmentOut에 사용되는 기본 정보
+    """
+    receiver_name = mask_name(shipment.receiver_name) #성을 마스킹 처리
+    receiver_phone_number = mask_phone_num(shipment.receiver_phone_number) #핸드폰 뒤의 4자리 마스킹 처리
+    destination = mask_destination(shipment.destination) #시 동 구 까지만 출력되게 
+    return {"receiver_name":receiver_name, "receiver_phone_number":receiver_phone_number, "destination": destination}
+
+
+def select_shipment(
+        session: Session,
+        shipment_id:str,
+    ) -> Shipment:
+    """
+    배송 테이블에서 뱌송 번호를 기반으로 테이블을 조회합니다.
+
+    Args:
+        session (Session): 연결 세션
+        shipment_id (str): 배송 번호
+
+    Returns:
+        Shipment: 배송 정보
+    """
+
+    shipment = session.query(Shipment).filter_by(id=shipment_id).first()
+    return shipment
