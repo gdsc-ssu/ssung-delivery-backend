@@ -5,7 +5,7 @@ from starlette import status
 from authentication import get_auth_sender
 from database import create_session
 from domain.shipment import shipment_schema, shipment_crud
-from domain.shipment.shipment_crud import delete_shipment, select_shipment
+from domain.shipment.shipment_crud import delete_shipment, select_shipment, select_sender_shipments
 from models import Sender
 
 router = APIRouter(prefix="/api/shipment")
@@ -80,9 +80,14 @@ async def show_shipmnet(shipemnt_id:str, receiver_name:str=None, session:Session
     
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    
 
 
-
-
+@router.get("/sender_shipments", status_code=status.HTTP_200_OK, tags=['shipments'])
+async def show_sender_shipments(sender:Sender=Depends(get_auth_sender), session:Session=Depends(create_session)):
+    print(sender.__dict__)
+    shipments = select_sender_shipments(session, sender.id)
+    if shipments:
+        return shipments
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 

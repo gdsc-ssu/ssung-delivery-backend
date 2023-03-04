@@ -127,3 +127,8 @@ def select_shipment(
 
     shipment = session.query(Shipment).filter_by(id=shipment_id).first()
     return shipment
+
+
+def select_sender_shipments(session:Session, sender_id:int) -> list:
+    shipemnts = session.query(Shipment).filter_by(sender_id=sender_id).all()
+    return shipemnts
