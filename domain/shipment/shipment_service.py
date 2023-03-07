@@ -3,7 +3,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from domain.crew import crew_crud
+from domain.crew import crew_query
 from domain.shipment import shipment_schema
 from domain.shipment.shipment_query import select_shipment, insert_shipment
 from domain.shipment.shipment_schema import ShipmentOut
@@ -17,7 +17,7 @@ def convert_to_model(
 ) -> Shipment:
     return Shipment(
         content_id=1,  # TODO: replace stub
-        crew_id=crew_crud.get_crew(session, "string").id,  # TODO: replace stub
+        crew_id=crew_query.select_crew(session, "string").id,  # TODO: replace stub
         sender_id=sender.id,
         location="location",  # TODO: replace stub
         destination=schema.destination,

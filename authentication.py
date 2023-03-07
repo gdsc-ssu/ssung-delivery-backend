@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from database import create_session
-from domain.crew.crew_crud import get_crew
-from domain.sender.sender_crud import get_sender
+from domain.crew.crew_query import select_crew
+from domain.sender.sender_query import select_sender
 from models import Sender, Crew
 from utils import get_token_subject
 
@@ -46,11 +46,11 @@ def get_auth_sender(
         token: str = Depends(sender_scheme),
         session: Session = Depends(create_session),
 ) -> Sender:
-    return get_auth_entity(get_sender, token, session)
+    return get_auth_entity(select_sender, token, session)
 
 
 def get_auth_crew(
         token: str = Depends(crew_scheme),
         session: Session = Depends(create_session),
 ) -> Crew:
-    return get_auth_entity(get_crew, token, session)
+    return get_auth_entity(select_crew, token, session)

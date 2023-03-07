@@ -23,8 +23,7 @@ def create_sender(
         HTTPException: 409 유저가 이미 존재 합니다.
 
     Returns:
-        dict
-        {"ok": True}
+        dict {"ok": True}
     """
     try:
         sender = sender_query.select_sender(session, sender_in.sender_name)
