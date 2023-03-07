@@ -5,18 +5,17 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from database import create_session
-from domain.sender import sender_crud
 from domain.sender import sender_schema
-from utils import verify_password, create_access_token
+from domain.sender.sender_service import create_sender, login_sender
 
 router = APIRouter(prefix="/api/sender")  # url 라우팅
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED, tags=["senders"])
-def sender_create(
+def create(
         sender_in: sender_schema.SenderIn,
         session: Session = Depends(create_session)
-):
+) -> dict:
     """
     유저를 생성합니다.
 
@@ -28,12 +27,7 @@ def sender_create(
         HTTPException: 409에러 이미 유저가 존재
     """
     try:
-        sender = sender_crud.get_sender(session, sender_in.sender_name)
-        if sender:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already Exists.")
-
-        sender_crud.create_sender(session=session, sender_in=sender_in)
-        return {"ok": True}
+        return create_sender(session, sender_in)
 
     except HTTPException as e:
         raise e
@@ -44,7 +38,7 @@ def sender_create(
 
 
 @router.post("/login", response_model=sender_schema.SenderOut, tags=["senders"])
-def login_for_access_token(
+def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
         session: Session = Depends(create_session)
 ):
@@ -63,16 +57,10 @@ def login_for_access_token(
         SenderOut: Sender 출력 모델
     """
     try:
-        sender = sender_crud.get_sender(session, form_data.username)
-        if sender and verify_password(form_data.password, sender.password):
-            access_token = create_access_token(subject=sender.sender_name)
-            return {
-                "access_token": access_token,
-                "token_type": "bearer",
-                "sender_name": sender.sender_name
-            }
-        else:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect sender_name or password")
+        return login_sender(session, form_data)
+
+    except HTTPException as e:
+        raise e
 
     except Exception:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
