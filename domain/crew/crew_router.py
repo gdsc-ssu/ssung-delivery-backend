@@ -5,15 +5,14 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from database import create_session
-from domain.crew import crew_crud
 from domain.crew import crew_schema
-from utils import verify_password, create_access_token
+from domain.crew.crew_service import create_crew, login_crew
 
 router = APIRouter(prefix="/api/crew")  # url 라우팅
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED, tags=["crews"])
-def crew_create(
+def create(
         crew_in: crew_schema.CrewIn,
         session: Session = Depends(create_session)
 ):
@@ -28,12 +27,7 @@ def crew_create(
         HTTPException: 409에러 이미 유저가 존재
     """
     try:
-        crew = crew_crud.get_crew(session, crew_in.crew_name)
-        if crew:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Crew already Exists.")
-
-        crew_crud.create_crew(session=session, crew_in=crew_in)
-        return {"ok": True}
+        return create_crew(crew_in, session)
 
     except HTTPException as e:
         raise e
@@ -43,7 +37,7 @@ def crew_create(
 
 
 @router.post("/login", response_model=crew_schema.CrewOut, tags=["crews"])
-def login_for_access_token(
+def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
         session: Session = Depends(create_session)
 ):
@@ -62,17 +56,7 @@ def login_for_access_token(
         crew_out: crew 출력 모델
     """
     try:
-        crew = crew_crud.get_crew(session, form_data.username)
-        if crew and verify_password(form_data.password, crew.password):
-            access_token = create_access_token(subject=crew.crew_name)
-            return {
-                "access_token": access_token,
-                "token_type": "bearer",
-                "crew_name": crew.crew_name
-            }
-        else:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect crewname or password")
+        return login_crew(form_data, session)
 
-    except Exception as e:
-        print(e)
+    except Exception:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
