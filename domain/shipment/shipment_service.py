@@ -10,7 +10,7 @@ from domain.shipment.shipment_schema import ShipmentOut
 from models import Sender, Shipment
 
 
-def convert_to_model(
+def convert_to_shipment(
         session: Session,
         schema: shipment_schema.ShipmentIn,
         sender: Sender
@@ -42,7 +42,7 @@ def create_shipment(
 
     if isinstance(orders, list):
         converted_orders = [
-            convert_to_model(session, order, sender)
+            convert_to_shipment(session, order, sender)
             for order in orders
         ]
 
@@ -50,7 +50,7 @@ def create_shipment(
             insert_shipment(session, order)
 
     else:
-        insert_shipment(session, convert_to_model(session, orders, sender))
+        insert_shipment(session, convert_to_shipment(session, orders, sender))
 
 
 def masking(shipment: Shipment, receiver_name: str) -> dict:
