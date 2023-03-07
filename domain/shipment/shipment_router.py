@@ -86,3 +86,19 @@ async def read(
     except Exception as e:
         traceback.print_exception(*sys.exc_info())
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@router.get("/read-all", status_code=status.HTTP_200_OK, tags=['shipments'])
+async def read_all(
+        sender: Sender = Depends(get_auth_sender),
+        session: Session = Depends(create_session)
+) -> list[ShipmentOut]:
+    try:
+        return shipment_service.read_all_shipment(sender, session)
+
+    except HTTPException as e:
+        raise e
+
+    except Exception:
+        traceback.print_exception(*sys.exc_info())
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -69,3 +69,19 @@ def select_shipment(
 
     except Exception as e:
         raise e
+
+
+def select_all_shipments(
+        session: Session,
+        sender: Sender
+) -> list[Shipment]:
+    try:
+        query = session.query(Shipment).filter_by(sender_id=sender.id).all()
+
+        if query is None or len(query) == 0:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+        return query
+
+    except Exception as e:
+        raise e

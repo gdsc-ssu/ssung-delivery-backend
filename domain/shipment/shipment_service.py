@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from domain.crew import crew_query
 from domain.shipment import shipment_schema
-from domain.shipment.shipment_query import select_shipment, insert_shipment
+from domain.shipment.shipment_query import select_shipment, insert_shipment, select_all_shipments
 from domain.shipment.shipment_schema import ShipmentOut
 from models import Sender, Shipment
 
@@ -69,11 +69,7 @@ def masking(shipment: Shipment, receiver_name: str) -> dict:
             destination: 상세 주소 전부 마스킹 처리
         }
     """
-    shipment_info = {
-        "receiver_name": shipment.receiver_name,
-        "receiver_phone_number": shipment.receiver_phone_number,
-        "destination": shipment.destination
-    }
+    shipment_info = extract_shipment_info(shipment)
 
     # 수신자 이름으로 유저 신원 파악
     # 일치하지 않는 경우 마스킹한 정보를 전송한다.
@@ -87,6 +83,14 @@ def masking(shipment: Shipment, receiver_name: str) -> dict:
             )
         }
     return shipment_info
+
+
+def extract_shipment_info(shipment: Shipment) -> dict:
+    return {
+        "receiver_name": shipment.receiver_name,
+        "receiver_phone_number": shipment.receiver_phone_number,
+        "destination": shipment.destination
+    }
 
 
 def read_shipment(
@@ -108,6 +112,18 @@ def read_shipment(
         # 주문번호 기반으로 조회 TODO 식별자 사용 조회
         shipment = select_shipment(session, shipment_id)
         return ShipmentOut(**masking(shipment, receiver_name))
+
+    except Exception as e:
+        raise e
+
+
+def read_all_shipment(
+        sender: Sender,
+        session: Session,
+) -> list[ShipmentOut]:
+    try:
+        shipments = select_all_shipments(session, sender)
+        return [ShipmentOut(**extract_shipment_info(el)) for el in shipments]
 
     except Exception as e:
         raise e
