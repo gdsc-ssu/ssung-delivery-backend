@@ -31,7 +31,7 @@ def create_shipment(
         session: Session,
         orders: shipment_schema.ShipmentIn | list[shipment_schema.ShipmentIn],
         sender: Sender
-) -> None:
+) -> dict:
     """
     배송 주문 생성을 위한 함수 입니다.
     Args:
@@ -51,6 +51,8 @@ def create_shipment(
 
     else:
         insert_shipment(session, convert_to_shipment(session, orders, sender))
+
+    return {"ok": True}
 
 
 def masking(shipment: Shipment, receiver_name: str) -> dict:
