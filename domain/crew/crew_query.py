@@ -1,6 +1,6 @@
-from fastapi import HTTPException
+from typing import Optional
+
 from sqlalchemy.orm import Session
-from starlette import status
 
 from domain.crew import crew_schema
 from models import Crew
@@ -29,7 +29,7 @@ def insert_crew(session: Session, crew_in: crew_schema.CrewIn) -> None:
         raise e
 
 
-def select_crew(session: Session, crew_name: str) -> Crew:
+def select_crew(session: Session, crew_name: str) -> Optional[Crew]:
     """
     크루 이름을 기반 으로 DB 에서 크루 정보를 선택 합니다.
 
@@ -41,12 +41,7 @@ def select_crew(session: Session, crew_name: str) -> Crew:
         Crew, None: DB에 크루 이름을 기반 으로 탐색한 결과를 반환 합니다. 결과는 row 이거나 None 입니다.
     """
     try:
-        query = session.query(Crew).filter_by(crew_name=crew_name).first()
-
-        if query is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-
-        return query
+        return session.query(Crew).filter_by(crew_name=crew_name).first()
 
     except Exception as e:
         raise e

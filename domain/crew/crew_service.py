@@ -62,6 +62,9 @@ def login_crew(
     try:
         crew = crew_query.select_crew(session, form_data.username)
 
+        if crew is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
         if not verify_password(form_data.password, crew.password):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect crewname or password")
 
