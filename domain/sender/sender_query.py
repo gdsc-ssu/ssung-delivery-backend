@@ -1,6 +1,6 @@
-from fastapi import HTTPException
+from typing import Optional
+
 from sqlalchemy.orm import Session
-from starlette import status
 
 from domain.sender import sender_schema
 from models import Sender
@@ -30,7 +30,7 @@ def insert_sender(session: Session, sender_in: sender_schema.SenderIn) -> None:
         raise e
 
 
-def select_sender(session: Session, sender_name: str) -> Sender:
+def select_sender(session: Session, sender_name: str) -> Optional[Sender]:
     """
     유저 이름을 기반 으로 DB에서 유저 정보를 선택 합니다.
 
@@ -42,12 +42,7 @@ def select_sender(session: Session, sender_name: str) -> Sender:
         User, None: DB에 유저 이름을 기반 으로 탐색한 결과를 반환 합니다. 결과는 row 이거나 None 입니다.
     """
     try:
-        query = session.query(Sender).filter_by(sender_name=sender_name).first()
-
-        if query is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-
-        return query
+        return session.query(Sender).filter_by(sender_name=sender_name).first()
 
     except Exception as e:
         raise e
