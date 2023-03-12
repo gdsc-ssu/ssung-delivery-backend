@@ -59,6 +59,7 @@ async def shipping_tracking():
 async def read(
         shipment_id: int,
         receiver_name: Optional[str] = None,
+        receiver_phone_number:Optional[str] =  None,
         session: Session = Depends(create_session)
 ) -> ShipmentOut:
     """
@@ -78,7 +79,7 @@ async def read(
         ShipmentOut: 기본적인 배송 정보가 담겨 있다.
     """
     try:
-        return shipment_service.read_shipment(shipment_id, receiver_name, session)
+        return shipment_service.read_shipment(shipment_id, receiver_name, receiver_phone_number, session)
 
     except HTTPException as e:
         raise e
