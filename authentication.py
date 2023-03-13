@@ -1,7 +1,6 @@
 from typing import Callable
 
 from fastapi import HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 from sqlalchemy.orm import Session
 from starlette import status
@@ -17,9 +16,6 @@ credentials_exception = HTTPException(
     detail="Could not validate credentials",
     headers={"WWW-Authenticate": "Bearer"},
 )
-
-sender_scheme = OAuth2PasswordBearer(tokenUrl="/api/sender/login")
-crew_scheme = OAuth2PasswordBearer(tokenUrl="/api/crew/login")
 
 
 def get_auth_entity(
@@ -43,14 +39,14 @@ def get_auth_entity(
 
 
 def get_auth_sender(
-        token: str = Depends(sender_scheme),
+        token: str,
         session: Session = Depends(create_session),
 ) -> Sender:
     return get_auth_entity(select_sender, token, session)
 
 
 def get_auth_crew(
-        token: str = Depends(crew_scheme),
+        token: str,
         session: Session = Depends(create_session),
 ) -> Crew:
     return get_auth_entity(select_crew, token, session)

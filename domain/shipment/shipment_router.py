@@ -40,6 +40,7 @@ async def delete(
 async def read(
         shipment_id: int,
         receiver_name: Optional[str] = None,
+        receiver_phone_number:Optional[str] =  None,
         session: Session = Depends(create_session)
 ) -> ShipmentOut:
     """
@@ -58,7 +59,7 @@ async def read(
         Returns:
             ShipmentOut: 기본적인 배송 정보가 담겨 있다.
     """
-    return shipment_service.read_shipment(shipment_id, receiver_name, session)
+    return shipment_service.read_shipment(shipment_id, receiver_name, receiver_phone_number, session)
 
 
 @router.get("/track", status_code=status.HTTP_200_OK, tags=['shipments'])
