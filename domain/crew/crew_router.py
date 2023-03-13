@@ -1,21 +1,23 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from starlette import status
 
 from database import create_session
+from domain.common.router import exception_handler
 from domain.crew import crew_schema
 from domain.crew.crew_service import create_crew, login_crew
 
-router = APIRouter(prefix="/api/crew")  # url 라우팅
+router = APIRouter(prefix="/crew", tags=["crews"])  # url 라우팅
 
 
-@router.post("/create", status_code=status.HTTP_201_CREATED, tags=["crews"])
+@exception_handler
+@router.post("/create", status_code=status.HTTP_201_CREATED)
 def create(
         crew_in: crew_schema.CrewIn,
         session: Session = Depends(create_session)
-):
+) -> dict:
     """
     유저를 생성 합니다.
 
@@ -26,21 +28,15 @@ def create(
     Raises:
         HTTPException: 409에러 이미 유저가 존재
     """
-    try:
-        return create_crew(crew_in, session)
-
-    except HTTPException as e:
-        raise e
-
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return create_crew(crew_in, session)
 
 
-@router.post("/login", response_model=crew_schema.CrewOut, tags=["crews"])
+@exception_handler
+@router.post("/login", response_model=crew_schema.CrewOut)
 def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
         session: Session = Depends(create_session)
-):
+) -> dict:
     """
     로그인 토큰을 검증해 로그인을 진행 합니다.
 
@@ -55,8 +51,4 @@ def login(
     Returns:
         crew_out: crew 출력 모델
     """
-    try:
-        return login_crew(form_data, session)
-
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return login_crew(form_data, session)

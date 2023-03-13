@@ -27,6 +27,7 @@ def create_sender(
     """
     try:
         sender = sender_query.select_sender(session, sender_in.sender_name)
+
         if sender:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already Exists.")
 
@@ -61,6 +62,9 @@ def login_sender(
     """
     try:
         sender = sender_query.select_sender(session, form_data.username)
+
+        if sender is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
         if not verify_password(form_data.password, sender.password):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect sender_name or password")
