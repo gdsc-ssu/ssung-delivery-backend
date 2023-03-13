@@ -9,11 +9,11 @@ from domain.common.router import exception_handler
 from domain.crew import crew_schema
 from domain.crew.crew_service import create_crew, login_crew
 
-router = APIRouter(prefix="/crew")  # url 라우팅
+router = APIRouter(prefix="/crew", tags=["crews"])  # url 라우팅
 
 
 @exception_handler
-@router.post("/create", status_code=status.HTTP_201_CREATED, tags=["crews"])
+@router.post("/create", status_code=status.HTTP_201_CREATED)
 def create(
         crew_in: crew_schema.CrewIn,
         session: Session = Depends(create_session)
@@ -32,7 +32,7 @@ def create(
 
 
 @exception_handler
-@router.post("/login", response_model=crew_schema.CrewOut, tags=["crews"])
+@router.post("/login", response_model=crew_schema.CrewOut)
 def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
         session: Session = Depends(create_session)

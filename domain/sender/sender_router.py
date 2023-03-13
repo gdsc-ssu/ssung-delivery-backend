@@ -9,11 +9,11 @@ from domain.common.router import exception_handler
 from domain.sender import sender_schema
 from domain.sender.sender_service import create_sender, login_sender
 
-router = APIRouter(prefix="/sender")  # url 라우팅
+router = APIRouter(prefix="/sender", tags=["senders"])  # url 라우팅
 
 
 @exception_handler
-@router.post("/create", status_code=status.HTTP_201_CREATED, tags=["senders"])
+@router.post("/create", status_code=status.HTTP_201_CREATED)
 def create(
         sender_in: sender_schema.SenderIn,
         session: Session = Depends(create_session)
@@ -32,7 +32,7 @@ def create(
 
 
 @exception_handler
-@router.post("/login", response_model=sender_schema.SenderOut, tags=["senders"])
+@router.post("/login", response_model=sender_schema.SenderOut)
 def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
         session: Session = Depends(create_session)
