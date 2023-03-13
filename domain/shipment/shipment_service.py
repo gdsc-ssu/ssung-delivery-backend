@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from domain.crew import crew_query
 from domain.shipment import shipment_schema
-from domain.shipment.shipment_query import select_shipment, insert_shipment
+from domain.shipment.shipment_query import select_shipment, insert_shipment, select_all_shipments
 from domain.shipment.shipment_schema import ShipmentOut
 from models import Sender, Shipment
 
@@ -27,7 +27,7 @@ def convert_to_shipment(
     )
 
 
-def conver_to_shipment_out(shipment_info:dict) -> ShipmentOut:
+def convert_to_shipment_out(shipment_info: dict) -> ShipmentOut:
     """
     딕셔너리를 출력 데이터 모델로 변환 합니다.
 
@@ -41,7 +41,7 @@ def conver_to_shipment_out(shipment_info:dict) -> ShipmentOut:
     for col, val in shipment_info.items():
         if col in ShipmentOut.__fields__: #불필요한 key들은 제거하고 출력 모델에 존재하는 key만 추출한다
             shipment_out_info[col] = val
-    
+
     return ShipmentOut(**shipment_out_info)
 
 
@@ -75,7 +75,6 @@ def masking(shipment: Shipment) -> dict:
     부분 정보 제공을 위한 마스킹을 실시합니다
 
     Args:
-        receiver_name (str): 수신자 이름
         shipment (Shipment): 배송 정보
 
     Returns:
@@ -100,7 +99,7 @@ def masking(shipment: Shipment) -> dict:
 def read_shipment(
         shipment_id: int,
         receiver_name: Optional[str],
-        receiver_phone_number:Optional[str],
+        receiver_phone_number: Optional[str],
         session: Session
 ) -> ShipmentOut:
     """
@@ -108,6 +107,7 @@ def read_shipment(
     Args:
         session: DB 연결을 위한 세션
         receiver_name: 수신자 이름. 마스킹 처리 여부를 판단하기 위해 사용됩니다.
+        receiver_phone_number: 수신자의 전화번호
         shipment_id: 주문 데이터를 조회하기 위한 주문 번호
 
     Returns:
@@ -116,14 +116,27 @@ def read_shipment(
     try:
         # 주문번호 기반으로 조회 TODO 식별자 사용 조회
         shipment = select_shipment(session, shipment_id)
-       
-        if receiver_name != shipment.receiver_name or receiver_phone_number != shipment.receiver_phone_number: #전화번호 추가 검증
+
+        # 전화번호 추가 검증
+        if receiver_name != shipment.receiver_name or receiver_phone_number != shipment.receiver_phone_number:
             shipment_info = masking(shipment)
-        
+
         else:
             shipment_info = shipment.__dict__
 
-        return conver_to_shipment_out(shipment_info)
+        return convert_to_shipment_out(shipment_info)
+
+    except Exception as e:
+        raise e
+
+
+def read_all_shipment(
+        sender: Sender,
+        session: Session,
+) -> list[ShipmentOut]:
+    try:
+        shipments = select_all_shipments(session, sender)
+        return [convert_to_shipment_out(el) for el in shipments]
 
     except Exception as e:
         raise e

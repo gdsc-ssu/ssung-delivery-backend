@@ -12,11 +12,11 @@ from domain.shipment.shipment_query import delete_shipment
 from domain.shipment.shipment_schema import ShipmentOut
 from models import Sender
 
-router = APIRouter(prefix="/shipment")
+router = APIRouter(prefix="/shipment", tags=['shipments'])
 
 
 @exception_handler
-@router.post("/create", status_code=status.HTTP_201_CREATED, tags=['shipments'])
+@router.post("/create", status_code=status.HTTP_201_CREATED)
 def create(
         shipment_in: shipment_schema.ShipmentIn | list[shipment_schema.ShipmentIn],
         session: Session = Depends(create_session),
@@ -26,7 +26,7 @@ def create(
 
 
 @exception_handler
-@router.delete("/delete/{shipment_id}", tags=['shipments'])
+@router.delete("/delete/{shipment_id}")
 async def delete(
         shipment_id: int,
         session: Session = Depends(create_session),
@@ -36,11 +36,11 @@ async def delete(
 
 
 @exception_handler
-@router.get("/read/{shipment_id}", status_code=status.HTTP_200_OK, tags=['shipments'], response_model=ShipmentOut)
+@router.get("/read/{shipment_id}", status_code=status.HTTP_200_OK, response_model=ShipmentOut)
 async def read(
         shipment_id: int,
         receiver_name: Optional[str] = None,
-        receiver_phone_number:Optional[str] =  None,
+        receiver_phone_number: Optional[str] = None,
         session: Session = Depends(create_session)
 ) -> ShipmentOut:
     """
@@ -51,6 +51,7 @@ async def read(
         Args:
             shipment_id (str): 배송 번호
             receiver_name (str, optional): 수신자 이름. Defaults to None.
+            receiver_phone_number: 수신자의 전화번호
             session (Session): 디비 연결을 위한 세션. Defaults to Depends(create_session).
 
         Raises:
@@ -62,6 +63,16 @@ async def read(
     return shipment_service.read_shipment(shipment_id, receiver_name, receiver_phone_number, session)
 
 
-@router.get("/track", status_code=status.HTTP_200_OK, tags=['shipments'])
+@exception_handler
+@router.get("/read-all", status_code=status.HTTP_200_OK)
+async def read_all(
+        sender: Sender = Depends(get_auth_sender),
+        session: Session = Depends(create_session)
+) -> list[ShipmentOut]:
+    return shipment_service.read_all_shipment(sender, session)
+
+
+@exception_handler
+@router.get("/track", status_code=status.HTTP_200_OK)
 async def shipping_tracking():
     return "DEVELOPING...."  # TODO: 배송 조회 라우터 구현
