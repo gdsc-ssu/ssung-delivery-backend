@@ -16,14 +16,13 @@ def convert_to_shipment(
         sender: Sender
 ) -> Shipment:
     return Shipment(
-        content_id=1,  # TODO: replace stub
         crew_id=crew_query.select_crew(session, "string").id,  # TODO: replace stub
         sender_id=sender.id,
-        location="location",  # TODO: replace stub
         destination=schema.destination,
         receiver_name=schema.receiver_name,
         receiver_phone_number=schema.receiver_phone_number,
-        shipment_detail=schema.shipment_detail
+        shipment_detail=schema.shipment_detail,
+        identifier=schema.identifier
     )
 
 

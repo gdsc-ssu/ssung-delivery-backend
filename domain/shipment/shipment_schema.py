@@ -10,6 +10,7 @@ class ShipmentIn(BaseModel):
     receiver_phone_number: Optional[str]
     destination: str
     shipment_detail: Optional[str]
+    identifier: list
 
 
 class ShipmentOut(BaseModel):

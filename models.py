@@ -47,17 +47,18 @@ class Crew(Base):
 class Shipment(Base):
     __tablename__ = 'shipments'
     id = Column(BIGINT, primary_key=True, autoincrement=True)
-    identifier = Column(JSON, nullable=False)
-    history = Column(JSON, nullable=False)
     crew_id = Column(Integer, ForeignKey("crews.id"), nullable=False)
     sender_id = Column(Integer, ForeignKey("senders.id"), nullable=False)
     status = Column(Enum(Status), default=Status.ready)
-    shipment_detail = Column(String(255), nullable=True)  # 배송시 주의사항 등
+    shipment_detail = Column(String(255), nullable=True) # 배송시 주의사항 등
     destination = Column(String(255), nullable=False)
     receiver_name = Column(String(255), nullable=True)
     receiver_phone_number = Column(String(255), nullable=True)
-    created_at = Column(TIMESTAMP, default=func.now())
-    updated_at = Column(TIMESTAMP, default=func.now())
+    shipment_start_date = Column(TIMESTAMP, default=func.now(), nullable=False)
+    shipment_end_date = Column(TIMESTAMP, nullable=True)
+    identifier = Column(JSON)
+    history = Column(JSON, nullable=True)
+
     # content_id = Column(BIGINT, ForeignKey("contents.id"), nullable=False)
     # location = Column(String(255), nullable=False)
 
