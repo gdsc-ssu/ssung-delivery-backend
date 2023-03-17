@@ -14,10 +14,7 @@ router = APIRouter(prefix="/crew", tags=["crews"])  # url 라우팅
 
 @exception_handler
 @router.post("/create", status_code=status.HTTP_201_CREATED)
-def create(
-        crew_in: crew_schema.CrewIn,
-        session: Session = Depends(create_session)
-) -> dict:
+def create(crew_in: crew_schema.CrewIn, session: Session = Depends(create_session)) -> dict:
     """
     유저를 생성 합니다.
 
@@ -34,8 +31,7 @@ def create(
 @exception_handler
 @router.post("/login", response_model=crew_schema.CrewOut)
 def login(
-        form_data: OAuth2PasswordRequestForm = Depends(),
-        session: Session = Depends(create_session)
+    form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(create_session)
 ) -> dict:
     """
     로그인 토큰을 검증해 로그인을 진행 합니다.

@@ -20,7 +20,7 @@ def insert_crew(session: Session, crew_in: crew_schema.CrewIn) -> None:
             crew_name=crew_in.crew_name,
             password=get_hash_password(crew_in.password),
             area=crew_in.area,
-            phone_number=crew_in.phone_number
+            phone_number=crew_in.phone_number,
         )
 
         session.add(crew)  # DB에 유처 정보를 추가 합니다.

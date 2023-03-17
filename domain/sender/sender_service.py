@@ -8,10 +8,7 @@ from domain.sender.sender_schema import SenderIn
 from utils import verify_password, create_access_token
 
 
-def create_sender(
-        session: Session,
-        sender_in: SenderIn
-) -> dict:
+def create_sender(session: Session, sender_in: SenderIn) -> dict:
     """
     Sender를 생성하는 서비스 입니다.
 
@@ -38,10 +35,7 @@ def create_sender(
         raise e
 
 
-def login_sender(
-        session: Session,
-        form_data: OAuth2PasswordRequestForm
-):
+def login_sender(session: Session, form_data: OAuth2PasswordRequestForm):
     """
     Sender의 AccessToken을 제공받기 위해 사용합니다.
 
@@ -67,13 +61,15 @@ def login_sender(
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
         if not verify_password(form_data.password, sender.password):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect sender_name or password")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect sender_name or password"
+            )
 
         access_token = create_access_token(subject=sender.sender_name)
         return {
             "access_token": access_token,
             "token_type": "bearer",
-            "sender_name": sender.sender_name
+            "sender_name": sender.sender_name,
         }
 
     except Exception as e:

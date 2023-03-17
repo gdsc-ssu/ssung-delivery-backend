@@ -7,10 +7,7 @@ from domain.crew import crew_query, crew_schema
 from utils import verify_password, create_access_token
 
 
-def create_crew(
-        crew_in: crew_schema.CrewIn,
-        session: Session
-) -> dict:
+def create_crew(crew_in: crew_schema.CrewIn, session: Session) -> dict:
     """
     Crew를 생성하는 서비스 입니다.
 
@@ -37,10 +34,7 @@ def create_crew(
         raise e
 
 
-def login_crew(
-        form_data: OAuth2PasswordRequestForm,
-        session: Session
-) -> dict:
+def login_crew(form_data: OAuth2PasswordRequestForm, session: Session) -> dict:
     """
     Crew의 AccessToken을 제공받기 위해 사용합니다.
 
@@ -66,14 +60,12 @@ def login_crew(
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
         if not verify_password(form_data.password, crew.password):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect crewname or password")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect crewname or password"
+            )
 
         access_token = create_access_token(subject=crew.crew_name)
-        return {
-            "access_token": access_token,
-            "token_type": "bearer",
-            "crew_name": crew.crew_name
-        }
+        return {"access_token": access_token, "token_type": "bearer", "crew_name": crew.crew_name}
 
     except Exception as e:
         raise e

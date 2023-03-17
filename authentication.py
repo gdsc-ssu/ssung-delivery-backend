@@ -19,9 +19,9 @@ credentials_exception = HTTPException(
 
 
 def get_auth_entity(
-        get_entity: Callable[[Session, str], Sender | Crew | None],
-        token: str,
-        session: Session,
+    get_entity: Callable[[Session, str], Sender | Crew | None],
+    token: str,
+    session: Session,
 ) -> Sender | Crew:
     try:
         username = get_token_subject(token)
@@ -39,14 +39,14 @@ def get_auth_entity(
 
 
 def get_auth_sender(
-        token: str,
-        session: Session = Depends(create_session),
+    token: str,
+    session: Session = Depends(create_session),
 ) -> Sender:
     return get_auth_entity(select_sender, token, session)
 
 
 def get_auth_crew(
-        token: str,
-        session: Session = Depends(create_session),
+    token: str,
+    session: Session = Depends(create_session),
 ) -> Crew:
     return get_auth_entity(select_crew, token, session)

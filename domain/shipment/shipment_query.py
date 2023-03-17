@@ -5,10 +5,7 @@ from starlette import status
 from models import Shipment, Sender
 
 
-def insert_shipment(
-        session: Session,
-        order: Shipment
-) -> None:
+def insert_shipment(session: Session, order: Shipment) -> None:
     """
     배송 주문 생성을 위한 함수 입니다.
     Args:
@@ -18,11 +15,7 @@ def insert_shipment(
     session.add(order)
 
 
-def delete_shipment(
-        session: Session,
-        sender: Sender,
-        shipment_id: int
-) -> None:
+def delete_shipment(session: Session, sender: Sender, shipment_id: int) -> None:
     """
     배송 주문을 삭제 하는 함수 입니다.
     Args:
@@ -46,8 +39,8 @@ def delete_shipment(
 
 
 def select_shipment(
-        session: Session,
-        shipment_id: int,
+    session: Session,
+    shipment_id: int,
 ) -> Shipment:
     """
     배송 테이블에서 뱌송 번호를 기반으로 테이블을 조회합니다.
@@ -71,10 +64,7 @@ def select_shipment(
         raise e
 
 
-def select_all_shipments(
-        session: Session,
-        sender: Sender
-) -> list[Shipment]:
+def select_all_shipments(session: Session, sender: Sender) -> list[Shipment]:
     try:
         query = session.query(Shipment).filter_by(sender_id=sender.id).all()
 
