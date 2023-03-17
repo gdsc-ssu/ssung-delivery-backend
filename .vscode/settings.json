@@ -1,0 +1,8 @@
+{
+  "editor.defaultFormatter": "ms-python.python",
+  "python.formatting.provider": "black",
+  "python.formatting.blackArgs": ["--line-length", "100"],
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+}
