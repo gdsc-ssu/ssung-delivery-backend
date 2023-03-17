@@ -20,7 +20,7 @@ def insert_sender(session: Session, sender_in: sender_schema.SenderIn) -> None:
             sender_name=sender_in.sender_name,
             password=get_hash_password(sender_in.password),
             address=sender_in.address,
-            phone_number=sender_in.phone_number
+            phone_number=sender_in.phone_number,
         )
 
         # session은 컨텍스트 매니저로 원자성 보존

@@ -13,7 +13,7 @@ class Status(enum.Enum):
 
 
 class Sender(Base):
-    __tablename__ = 'senders'
+    __tablename__ = "senders"
     id = Column(Integer, primary_key=True, autoincrement=True)
     sender_name = Column(String(30), nullable=False, unique=True)
     password = Column(String(200), nullable=False)
@@ -24,7 +24,7 @@ class Sender(Base):
 
 
 class Crew(Base):
-    __tablename__ = 'crews'
+    __tablename__ = "crews"
     id = Column(Integer, primary_key=True, autoincrement=True)
     crew_name = Column(String(30), nullable=False, unique=True)
     password = Column(String(200), nullable=False)
@@ -45,12 +45,12 @@ class Crew(Base):
 
 
 class Shipment(Base):
-    __tablename__ = 'shipments'
+    __tablename__ = "shipments"
     id = Column(BIGINT, primary_key=True, autoincrement=True)
     crew_id = Column(Integer, ForeignKey("crews.id"), nullable=False)
     sender_id = Column(Integer, ForeignKey("senders.id"), nullable=False)
     status = Column(Enum(Status), default=Status.ready)
-    shipment_detail = Column(String(255), nullable=True) # 배송시 주의사항 등
+    shipment_detail = Column(String(255), nullable=True)  # 배송시 주의사항 등
     destination = Column(String(255), nullable=False)
     receiver_name = Column(String(255), nullable=True)
     receiver_phone_number = Column(String(255), nullable=True)
@@ -62,9 +62,9 @@ class Shipment(Base):
     # content_id = Column(BIGINT, ForeignKey("contents.id"), nullable=False)
     # location = Column(String(255), nullable=False)
 
-
     # shipment_start_date = Column(TIMESTAMP, default=func.now(), nullable=False)
     # shipment_end_date = Column(TIMESTAMP)
+
 
 # if __name__ == '__main__':
 # Base.metadata.create_all(engine)
