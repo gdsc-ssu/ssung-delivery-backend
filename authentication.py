@@ -4,6 +4,7 @@ from fastapi import HTTPException, Depends
 from jose import JWTError
 from sqlalchemy.orm import Session
 from starlette import status
+from fastapi.security import OAuth2PasswordBearer
 
 from database import create_session
 from domain.crew.crew_query import select_crew
@@ -16,6 +17,9 @@ credentials_exception = HTTPException(
     detail="Could not validate credentials",
     headers={"WWW-Authenticate": "Bearer"},
 )
+
+sender_scheme = OAuth2PasswordBearer(tokenUrl="/sender/login")
+crew_scheme = OAuth2PasswordBearer(tokenUrl="/crew/login")
 
 
 def get_auth_entity(
@@ -39,14 +43,14 @@ def get_auth_entity(
 
 
 def get_auth_sender(
-    token: str,
+    token: str = Depends(sender_scheme),
     session: Session = Depends(create_session),
 ) -> Sender:
     return get_auth_entity(select_sender, token, session)
 
 
 def get_auth_crew(
-    token: str,
+    token: str = Depends(crew_scheme),
     session: Session = Depends(create_session),
 ) -> Crew:
     return get_auth_entity(select_crew, token, session)
