@@ -23,10 +23,11 @@ def create_sender(session: Session, sender_in: SenderIn) -> dict:
         dict {"ok": True}
     """
     try:
-        sender = sender_query.select_sender(session, sender_in.sender_name)
+        sender = sender_query.select_sender(session, sender_in.sender_id)
 
         if sender:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already Exists.")
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT, detail="Same Id already Exists.")
 
         sender_query.insert_sender(session=session, sender_in=sender_in)
         return {"ok": True}

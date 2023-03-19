@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 
 class SenderIn(BaseModel):
+    sender_id: str
     sender_name: str
     password: str
     address: str

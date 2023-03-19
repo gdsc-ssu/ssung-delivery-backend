@@ -17,6 +17,7 @@ def insert_sender(session: Session, sender_in: sender_schema.SenderIn) -> None:
     """
     try:
         sender = Sender(
+            sender_id=sender_in.sender_id,
             sender_name=sender_in.sender_name,
             password=get_hash_password(sender_in.password),
             address=sender_in.address,

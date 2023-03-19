@@ -17,6 +17,7 @@ def insert_crew(session: Session, crew_in: crew_schema.CrewIn) -> None:
     """
     try:
         crew = Crew(
+            crew_id=crew_in.crew_id,
             crew_name=crew_in.crew_name,
             password=get_hash_password(crew_in.password),
             area=crew_in.area,

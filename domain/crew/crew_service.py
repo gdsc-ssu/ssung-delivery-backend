@@ -22,10 +22,11 @@ def create_crew(crew_in: crew_schema.CrewIn, session: Session) -> dict:
         dict {"ok": True}
     """
     try:
-        crew = crew_query.select_crew(session, crew_in.crew_name)
+        crew = crew_query.select_crew(session, crew_in.crew_id)
 
         if crew:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Crew already Exists.")
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT, detail="Same Id already Exists.")
 
         crew_query.insert_crew(session=session, crew_in=crew_in)
         return {"ok": True}
