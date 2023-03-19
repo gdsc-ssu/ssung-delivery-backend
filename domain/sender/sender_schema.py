@@ -2,10 +2,11 @@ from pydantic import BaseModel
 
 
 class SenderIn(BaseModel):
+    sender_id: str
     sender_name: str
     password: str
     address: str
-    phone_number: str
+    sender_phone_number: str
 
 
 class SenderOut(BaseModel):
