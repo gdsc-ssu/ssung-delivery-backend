@@ -3,7 +3,7 @@ import enum
 from sqlalchemy import Column, Integer, String, JSON, TIMESTAMP, BIGINT, Enum, ForeignKey
 from sqlalchemy.sql.expression import func
 
-from database import Base
+from database import Base, engine
 
 
 class Status(enum.Enum):
@@ -15,7 +15,8 @@ class Status(enum.Enum):
 class Sender(Base):
     __tablename__ = "senders"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    sender_name = Column(String(30), nullable=False, unique=True)
+    sender_id = Column(String(30), nullable=False, unique=True)
+    sender_name = Column(String(30), nullable=False)
     password = Column(String(200), nullable=False)
     address = Column(String(50), nullable=False)
     phone_number = Column(String(20), nullable=False)
@@ -26,8 +27,9 @@ class Sender(Base):
 class Crew(Base):
     __tablename__ = "crews"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    crew_name = Column(String(30), nullable=False, unique=True)
-    password = Column(String(200), nullable=False)
+    crew_id = Column(String(30), nullable=False, unique=True)
+    crew_name = Column(String(30), nullable=False)
+    password = Column(String(30), nullable=False)
     area = Column(String(50), nullable=False)
     phone_number = Column(String(20), nullable=False)
     created_at = Column(TIMESTAMP, default=func.now())
@@ -66,7 +68,7 @@ class Shipment(Base):
     # shipment_end_date = Column(TIMESTAMP)
 
 
-# if __name__ == '__main__':
-# Base.metadata.create_all(engine)
+if __name__ == '__main__':
+    Base.metadata.create_all(engine)
 # session = create_session()
 # print(next(session).query(Shipment).all())
