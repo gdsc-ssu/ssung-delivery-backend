@@ -2,11 +2,9 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session, Query
 from starlette import status
 
-from domain.common.query import transactional
 from models import Shipment, Sender, Crew
 
 
-@transactional
 def insert_shipment(session: Session, order: Shipment) -> None:
     """
     배송 주문 생성을 위한 함수 입니다.
@@ -17,7 +15,6 @@ def insert_shipment(session: Session, order: Shipment) -> None:
     session.add(order)
 
 
-@transactional
 def delete_shipment(session: Session, sender: Sender, shipment_id: int) -> None:
     """
     배송 주문을 삭제 하는 함수 입니다.
@@ -26,15 +23,19 @@ def delete_shipment(session: Session, sender: Sender, shipment_id: int) -> None:
         sender: 발송자 인증을 위한 토큰
         shipment_id: 삭제 하려고 하는 주문 ID
     """
-    query = session.query(Shipment).filter_by(id=shipment_id).first()
+    try:
+        query = session.query(Shipment).filter_by(id=shipment_id).first()
 
-    if query is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        if query is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    if query.sender_id != sender.id:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT)
+        if query.sender_id != sender.id:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT)
 
-    session.delete(query)
+        session.delete(query)
+
+    except Exception as e:
+        raise e
 
 
 def create_read_query(session: Session) -> Query:
@@ -59,7 +60,6 @@ def create_read_query(session: Session) -> Query:
     return query
 
 
-@transactional
 def select_shipment(
     session: Session,
     shipment_id: int,
@@ -74,19 +74,25 @@ def select_shipment(
     Returns:
         Shipment: 배송 정보
     """
-    query = session.query(Shipment).filter_by(id=shipment_id).first()
+    try:
+        query = create_read_query(session).filter(Shipment.id == shipment_id).first()
 
-    if query is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        if query is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    return query
+        return query
+
+    except Exception as e:
+        raise e
 
 
-@transactional
 def select_all_shipments(session: Session, sender: Sender) -> list[Shipment]:
-    query = session.query(Shipment).filter_by(sender_id=sender.id).all()
+    try:
+        query = create_read_query(session).filter(Sender.id == sender.id).all()
+        if query is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    if query is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        return query
 
-    return query
+    except Exception as e:
+        raise e
