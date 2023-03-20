@@ -19,6 +19,7 @@ def convert_to_shipment(
         destination=schema.destination,
         receiver_name=schema.receiver_name,
         receiver_phone_number=schema.receiver_phone_number,
+        content=schema.content,
         shipment_detail=schema.shipment_detail,
         identifier=schema.identifier,
     )
@@ -54,7 +55,7 @@ def create_shipment(
         orders: 배송 추가를 위한 스키마
         sender: 발송자 엔티티
     """
-
+    # print(sender.id, sender.sender_name)
     if isinstance(orders, list):
         converted_orders = [
             convert_to_shipment(session, order, sender) for order in orders
@@ -124,7 +125,7 @@ def read_shipment(
             shipment_info = masking(shipment)
 
         else:
-            shipment_info = shipment.__dict__
+            shipment_info = shipment._asdict()
 
         return convert_to_shipment_out(shipment_info)
 
@@ -138,7 +139,7 @@ def read_all_shipment(
 ) -> list[ShipmentOut]:
     try:
         shipments = select_all_shipments(session, sender)
-        return [convert_to_shipment_out(el) for el in shipments]
+        return [convert_to_shipment_out(shipment._asdict()) for shipment in shipments]
 
     except Exception as e:
         raise e
