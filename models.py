@@ -73,6 +73,10 @@ class Shipment(Base):
         default=[status_default],
     )
 
+    @property
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
     # content_id = Column(BIGINT, ForeignKey("contents.id"), nullable=False)
     # location = Column(String(255), nullable=False)
 
