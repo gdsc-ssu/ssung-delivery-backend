@@ -1,10 +1,12 @@
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Query
 from starlette import status
 
-from models import Shipment, Sender
+from domain.common.query import transactional
+from models import Shipment, Sender, Crew
 
 
+@transactional
 def insert_shipment(session: Session, order: Shipment) -> None:
     """
     배송 주문 생성을 위한 함수 입니다.
@@ -15,6 +17,7 @@ def insert_shipment(session: Session, order: Shipment) -> None:
     session.add(order)
 
 
+@transactional
 def delete_shipment(session: Session, sender: Sender, shipment_id: int) -> None:
     """
     배송 주문을 삭제 하는 함수 입니다.
@@ -23,25 +26,44 @@ def delete_shipment(session: Session, sender: Sender, shipment_id: int) -> None:
         sender: 발송자 인증을 위한 토큰
         shipment_id: 삭제 하려고 하는 주문 ID
     """
-    try:
-        query = session.query(Shipment).filter_by(id=shipment_id).first()
+    query = session.query(Shipment).filter_by(id=shipment_id).first()
 
-        if query is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if query is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-        if query.sender_id != sender.id:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT)
+    if query.sender_id != sender.id:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT)
 
-        session.delete(query)
-
-    except Exception as e:
-        raise e
+    session.delete(query)
 
 
+def create_read_query(session: Session) -> Query:
+    query = (
+        session.query(
+            Shipment.identifier,
+            Shipment.receiver_name,
+            Shipment.content,
+            Shipment.receiver_phone_number,
+            Shipment.destination,
+            Shipment.shipment_detail,
+            Shipment.status,
+            Shipment.history,
+            Sender.sender_name,
+            Sender.sender_phone_number,
+            Crew.crew_name,
+            Crew.crew_phone_number,
+        )
+        .join(Sender, Shipment.sender_id == Sender.id)
+        .join(Crew, Shipment.crew_id == Crew.id)
+    )
+    return query
+
+
+@transactional
 def select_shipment(
     session: Session,
     shipment_id: int,
-) -> Shipment:
+) -> tuple:
     """
     배송 테이블에서 뱌송 번호를 기반으로 테이블을 조회합니다.
 
@@ -52,26 +74,19 @@ def select_shipment(
     Returns:
         Shipment: 배송 정보
     """
-    try:
-        query = session.query(Shipment).filter_by(id=shipment_id).first()
+    query = create_read_query(session).filter(Shipment.id == shipment_id).first()
 
-        if query is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if query is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-        return query
-
-    except Exception as e:
-        raise e
+    return query
 
 
+@transactional
 def select_all_shipments(session: Session, sender: Sender) -> list[Shipment]:
-    try:
-        query = session.query(Shipment).filter_by(sender_id=sender.id).all()
+    query = create_read_query(session).filter(Sender.id == sender.id).all()
 
-        if query is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if query is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-        return query
-
-    except Exception as e:
-        raise e
+    return query
