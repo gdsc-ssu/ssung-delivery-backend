@@ -27,7 +27,8 @@ def create_sender(session: Session, sender_in: SenderIn) -> dict:
 
         if sender:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="Same Id already Exists.")
+                status_code=status.HTTP_409_CONFLICT, detail="Same Id already Exists."
+            )
 
         sender_query.insert_sender(session=session, sender_in=sender_in)
         return {"ok": True}
@@ -66,7 +67,7 @@ def login_sender(session: Session, form_data: OAuth2PasswordRequestForm):
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect sender_name or password"
             )
 
-        access_token = create_access_token(subject=sender.sender_name)
+        access_token = create_access_token(subject=sender.sender_id)
         return {
             "access_token": access_token,
             "token_type": "bearer",

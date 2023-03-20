@@ -21,7 +21,7 @@ def insert_crew(session: Session, crew_in: crew_schema.CrewIn) -> None:
             crew_name=crew_in.crew_name,
             password=get_hash_password(crew_in.password),
             area=crew_in.area,
-            phone_number=crew_in.phone_number,
+            crew_phone_number=crew_in.crew_phone_number,
         )
 
         session.add(crew)  # DB에 유처 정보를 추가 합니다.
@@ -30,7 +30,7 @@ def insert_crew(session: Session, crew_in: crew_schema.CrewIn) -> None:
         raise e
 
 
-def select_crew(session: Session, crew_name: str) -> Optional[Crew]:
+def select_crew(session: Session, crew_id: str) -> Optional[Crew]:
     """
     크루 이름을 기반 으로 DB 에서 크루 정보를 선택 합니다.
 
@@ -42,7 +42,7 @@ def select_crew(session: Session, crew_name: str) -> Optional[Crew]:
         Crew, None: DB에 크루 이름을 기반 으로 탐색한 결과를 반환 합니다. 결과는 row 이거나 None 입니다.
     """
     try:
-        return session.query(Crew).filter_by(crew_name=crew_name).first()
+        return session.query(Crew).filter_by(crew_id=crew_id).first()
 
     except Exception as e:
         raise e

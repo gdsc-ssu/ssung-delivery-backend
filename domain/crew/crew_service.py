@@ -26,7 +26,8 @@ def create_crew(crew_in: crew_schema.CrewIn, session: Session) -> dict:
 
         if crew:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="Same Id already Exists.")
+                status_code=status.HTTP_409_CONFLICT, detail="Same Id already Exists."
+            )
 
         crew_query.insert_crew(session=session, crew_in=crew_in)
         return {"ok": True}
@@ -65,7 +66,7 @@ def login_crew(form_data: OAuth2PasswordRequestForm, session: Session) -> dict:
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect crewname or password"
             )
 
-        access_token = create_access_token(subject=crew.crew_name)
+        access_token = create_access_token(subject=crew.crew_id)
         return {"access_token": access_token, "token_type": "bearer", "crew_name": crew.crew_name}
 
     except Exception as e:

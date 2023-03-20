@@ -6,7 +6,7 @@ class CrewIn(BaseModel):
     crew_id: str
     password: str
     area: str
-    phone_number: str
+    crew_phone_number: str
 
 
 class CrewOut(BaseModel):
