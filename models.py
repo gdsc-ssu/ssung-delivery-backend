@@ -1,15 +1,23 @@
 import enum
+import datetime
 
 from sqlalchemy import Column, Integer, String, JSON, TIMESTAMP, BIGINT, Enum, ForeignKey
 from sqlalchemy.sql.expression import func
 
 from database import Base, engine
 
+status_default = {
+    "date": datetime.datetime.now().strftime("%Y:%m:%d:%H:%M"),
+    "location": "Seoul",
+    "status": 0,
+}
+
 
 class Status(enum.Enum):
-    ready = 0
-    ongoing = 1
-    finished = 2
+    ordered = 0
+    shipping = 1
+    out_for_delivery = 2
+    shipped = 3
 
 
 class Sender(Base):
@@ -19,7 +27,7 @@ class Sender(Base):
     sender_name = Column(String(30), nullable=False)
     password = Column(String(200), nullable=False)
     address = Column(String(50), nullable=False)
-    phone_number = Column(String(20), nullable=False)
+    sender_phone_number = Column(String(20), nullable=False)
     created_at = Column(TIMESTAMP, default=func.now())
     updated_at = Column(TIMESTAMP, default=func.now())
 
@@ -29,9 +37,9 @@ class Crew(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     crew_id = Column(String(30), nullable=False, unique=True)
     crew_name = Column(String(30), nullable=False)
-    password = Column(String(30), nullable=False)
+    password = Column(String(200), nullable=False)
     area = Column(String(50), nullable=False)
-    phone_number = Column(String(20), nullable=False)
+    crew_phone_number = Column(String(20), nullable=False)
     created_at = Column(TIMESTAMP, default=func.now())
 
 
@@ -51,7 +59,8 @@ class Shipment(Base):
     id = Column(BIGINT, primary_key=True, autoincrement=True)
     crew_id = Column(Integer, ForeignKey("crews.id"), nullable=False)
     sender_id = Column(Integer, ForeignKey("senders.id"), nullable=False)
-    status = Column(Enum(Status), default=Status.ready)
+    status = Column(Enum(Status), default=Status.ordered)
+    content = Column(String(100), nullable=False)
     shipment_detail = Column(String(255), nullable=True)  # 배송시 주의사항 등
     destination = Column(String(255), nullable=False)
     receiver_name = Column(String(255), nullable=True)
@@ -59,7 +68,10 @@ class Shipment(Base):
     shipment_start_date = Column(TIMESTAMP, default=func.now(), nullable=False)
     shipment_end_date = Column(TIMESTAMP, nullable=True)
     identifier = Column(JSON)
-    history = Column(JSON, nullable=True)
+    history = Column(
+        JSON,
+        default=[status_default],
+    )
 
     # content_id = Column(BIGINT, ForeignKey("contents.id"), nullable=False)
     # location = Column(String(255), nullable=False)
@@ -68,7 +80,7 @@ class Shipment(Base):
     # shipment_end_date = Column(TIMESTAMP)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Base.metadata.create_all(engine)
 # session = create_session()
 # print(next(session).query(Shipment).all())
