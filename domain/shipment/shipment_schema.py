@@ -10,7 +10,12 @@ class ShipmentIn(BaseModel):
     receiver_phone_number: Optional[str]
     destination: str
     shipment_detail: Optional[str]
-    identifier: list
+
+
+class ShipmentCreateOk(BaseModel):
+    content: str
+    receiver_name: str
+    identifier: str
 
 
 class ShipmentOut(BaseModel):
@@ -23,6 +28,6 @@ class ShipmentOut(BaseModel):
     receiver_phone_number: Optional[str]
     destination: str
     shipment_detail: Optional[str] = None
-    identifier: Optional[list] = None
+    identifier: str
     history: Optional[list] = None
     status: Optional[enum.Enum] = None
