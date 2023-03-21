@@ -24,5 +24,12 @@ def create_session():
     try:
         yield session
 
+    except Exception as e:
+        session.rollback()
+        raise e
+
+    else:
+        session.commit()
+
     finally:
         session.close()
