@@ -11,6 +11,7 @@ origins = [
     "http://127.0.0.1:5173",
     "http://127.0.0.1",
     "http://localhost",
+    "http://localhost:5174",
     "http://api.ssung.app",
     "https://api.ssung.app",
 ]
