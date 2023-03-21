@@ -24,12 +24,5 @@ def create_session():
     try:
         yield session
 
-    except Exception as e:
-        session.rollback()  # 트랜 젝션 되돌림
-        raise e
-
-    else:
-        session.commit()
-
     finally:
         session.close()

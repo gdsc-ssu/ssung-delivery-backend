@@ -125,7 +125,7 @@ def read_shipment(
             shipment_info = masking(shipment)
 
         else:
-            shipment_info = shipment._asdict()
+            shipment_info = shipment.as_dict
 
         return convert_to_shipment_out(shipment_info)
 
@@ -139,7 +139,7 @@ def read_all_shipment(
 ) -> list[ShipmentOut]:
     try:
         shipments = select_all_shipments(session, sender)
-        return [convert_to_shipment_out(shipment._asdict()) for shipment in shipments]
+        return [convert_to_shipment_out(shipment.as_dict) for shipment in shipments]
 
     except Exception as e:
         raise e
