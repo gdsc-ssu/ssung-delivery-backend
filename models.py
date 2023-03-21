@@ -5,6 +5,7 @@ from sqlalchemy import Column, Integer, String, JSON, TIMESTAMP, BIGINT, Enum, F
 from sqlalchemy.sql.expression import func
 
 from database import Base, engine
+from utils import decode_id
 
 status_default = {
     "date": datetime.datetime.now().strftime("%Y:%m:%d:%H:%M"),
@@ -73,7 +74,7 @@ class Shipment(Base):
     receiver_phone_number = Column(String(255), nullable=True)
     shipment_start_date = Column(TIMESTAMP, default=func.now(), nullable=False)
     shipment_end_date = Column(TIMESTAMP, nullable=True)
-    identifier = Column(String(255))
+    identifier = Column(String(255), unique=True)
     history = Column(
         JSON,
         default=[status_default],
@@ -84,13 +85,19 @@ class Shipment(Base):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def __repr__(self):
-        return f"<Shipment id={self.id}, identifier={self.identifier}>"
+        return f"<Shipment id={self.id}, identifier={decode_id(self.identifier)}>"
 
     # content_id = Column(BIGINT, ForeignKey("contents.id"), nullable=False)
     # location = Column(String(255), nullable=False)
 
     # shipment_start_date = Column(TIMESTAMP, default=func.now(), nullable=False)
     # shipment_end_date = Column(TIMESTAMP)
+
+
+class Word(Base):
+    __tablename__ = "words"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    word = Column(String(255), nullable=False)
 
 
 if __name__ == "__main__":
