@@ -31,6 +31,9 @@ class Sender(Base):
     created_at = Column(TIMESTAMP, default=func.now())
     updated_at = Column(TIMESTAMP, default=func.now())
 
+    def __repr__(self) -> str:
+        return f"<Sender id={self.id}, sender_id={self.sender_id}>"
+
 
 class Crew(Base):
     __tablename__ = "crews"
@@ -41,6 +44,9 @@ class Crew(Base):
     area = Column(String(50), nullable=False)
     crew_phone_number = Column(String(20), nullable=False)
     created_at = Column(TIMESTAMP, default=func.now())
+
+    def __repr__(self) -> str:
+        return f"<Crew id={self.id}, crew_id={self.crew_id}>"
 
 
 # class Content(Base):
@@ -67,7 +73,7 @@ class Shipment(Base):
     receiver_phone_number = Column(String(255), nullable=True)
     shipment_start_date = Column(TIMESTAMP, default=func.now(), nullable=False)
     shipment_end_date = Column(TIMESTAMP, nullable=True)
-    identifier = Column(JSON)
+    identifier = Column(String(255))
     history = Column(
         JSON,
         default=[status_default],
@@ -76,6 +82,9 @@ class Shipment(Base):
     @property
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+    def __repr__(self):
+        return f"<Shipment id={self.id}, identifier={self.identifier}>"
 
     # content_id = Column(BIGINT, ForeignKey("contents.id"), nullable=False)
     # location = Column(String(255), nullable=False)
