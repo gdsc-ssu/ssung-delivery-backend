@@ -1,12 +1,14 @@
 import re
 from typing import Optional
+from enum import Enum
 
 from sqlalchemy.orm import Session
 
+from domain.common.identifier import create_identifier
 from domain.crew import crew_query
 from domain.shipment import shipment_schema
 from domain.shipment.shipment_query import select_shipment, insert_shipment, select_all_shipments
-from domain.shipment.shipment_schema import ShipmentOut
+from domain.shipment.shipment_schema import ShipmentOut, ShipmentCreateOk
 from models import Sender, Shipment
 
 
@@ -21,33 +23,50 @@ def convert_to_shipment(
         receiver_phone_number=schema.receiver_phone_number,
         content=schema.content,
         shipment_detail=schema.shipment_detail,
-        identifier=schema.identifier,
+        identifier=create_identifier(session),
     )
 
 
-def convert_to_shipment_out(shipment_info: dict) -> ShipmentOut:
+class OutSchema(Enum):
+    def __call__(self):
+        return self.value
+
+    def __contains__(self, member) -> bool:
+        return member in self.value.__fields__
+
+    OUT = ShipmentOut
+    CREATEOK = ShipmentCreateOk
+
+
+def __convert(shipment_info: dict, schema: OutSchema) -> ShipmentOut | ShipmentCreateOk:
     """
     딕셔너리를 출력 데이터 모델로 변환 합니다.
-
     Args:
         shipment_info (dict): 배송 정보가 저장된 딕셔너리
-
+        res (OutSchema): 출력하고 싶은 데이터 모델
     Returns:
         ShipmentOut: 배송정보 출력 모델
     """
-    shipment_out_info = {}
-    for col, val in shipment_info.items():
-        if col in ShipmentOut.__fields__:  # 불필요한 key들은 제거하고 출력 모델에 존재하는 key만 추출한다
-            shipment_out_info[col] = val
+    result = schema()
 
-    return ShipmentOut(**shipment_out_info)
+    # 불필요한 key들은 제거하고 출력 모델에 존재하는 key만 추출한다
+    shipment_out_info = {col: val for col, val in shipment_info.items() if col in schema}
+    return result(**shipment_out_info)
+
+
+def convert_to_shipment_out(shipment_info: dict) -> ShipmentOut:
+    return __convert(shipment_info, OutSchema.OUT)
+
+
+def convert_to_shipment_create_ok(shipment_info: dict) -> ShipmentCreateOk:
+    return __convert(shipment_info, OutSchema.CREATEOK)
 
 
 def create_shipment(
     session: Session,
     orders: shipment_schema.ShipmentIn | list[shipment_schema.ShipmentIn],
     sender: Sender,
-) -> dict:
+) -> ShipmentCreateOk | list[ShipmentCreateOk]:
     """
     배송 주문 생성을 위한 함수 입니다.
     Args:
@@ -57,17 +76,19 @@ def create_shipment(
     """
     # print(sender.id, sender.sender_name)
     if isinstance(orders, list):
-        converted_orders = [
-            convert_to_shipment(session, order, sender) for order in orders
-        ]  # 리스트 표현식은 반드시 한 줄로
+        result = []
+        converted_orders = [convert_to_shipment(session, order, sender) for order in orders]
 
         for order in converted_orders:
             insert_shipment(session, order)
+            result.append(convert_to_shipment_create_ok(order.as_dict))
 
     else:
-        insert_shipment(session, convert_to_shipment(session, orders, sender))
+        order = convert_to_shipment(session, orders, sender)
+        insert_shipment(session, order)
+        result = convert_to_shipment_create_ok(order.as_dict)
 
-    return {"ok": True}
+    return result
 
 
 def masking(shipment: Shipment) -> dict:
@@ -93,6 +114,7 @@ def masking(shipment: Shipment) -> dict:
         "receiver_phone_number": re.sub(r"\d{4}$", "****", shipment.receiver_phone_number or ""),
         "destination": " ".join(shipment.destination.split()[:2]),  # 마스킹 처리하지 말고 부분 정보만 넘겨주기
     }
+    masked_info["identifier"] = shipment.identifier
     return masked_info
 
 
@@ -116,6 +138,7 @@ def read_shipment(
     try:
         # 주문번호 기반으로 조회 TODO 식별자 사용 조회
         shipment = select_shipment(session, shipment_id)
+        shipment_info = shipment.as_dict
 
         # 전화번호 추가 검증
         if (
@@ -123,9 +146,6 @@ def read_shipment(
             or receiver_phone_number != shipment.receiver_phone_number
         ):
             shipment_info = masking(shipment)
-
-        else:
-            shipment_info = shipment.as_dict
 
         return convert_to_shipment_out(shipment_info)
 

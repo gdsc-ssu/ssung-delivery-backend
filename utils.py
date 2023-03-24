@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -33,3 +34,12 @@ def get_token_subject(token: str) -> str:
     return jwt.decode(token=token, algorithms=settings.ALGORITHM, key=settings.JWT_SECRET_KEY).get(
         "sub"
     )
+
+
+def encode_id(id_list: list) -> str:
+    id_bytes = ".".join(id_list).encode("UTF-8")
+    return base64.b64encode(id_bytes).decode("UTF-8")
+
+
+def decode_id(id: str) -> list:
+    return base64.b64decode(id.encode("UTF-8")).decode("UTF-8").split(".")

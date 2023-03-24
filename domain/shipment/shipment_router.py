@@ -9,14 +9,18 @@ from database import create_session
 from domain.common.router import exception_handler
 from domain.shipment import shipment_schema, shipment_service
 from domain.shipment.shipment_query import delete_shipment
-from domain.shipment.shipment_schema import ShipmentOut
+from domain.shipment.shipment_schema import ShipmentOut, ShipmentCreateOk
 from models import Sender
 
 router = APIRouter(prefix="/shipment", tags=["shipments"])
 
 
 @exception_handler
-@router.post("/create", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/create",
+    status_code=status.HTTP_201_CREATED,
+    response_model=ShipmentCreateOk | list[ShipmentCreateOk],
+)
 def create(
     shipment_in: shipment_schema.ShipmentIn | list[shipment_schema.ShipmentIn],
     session: Session = Depends(create_session),
