@@ -74,7 +74,7 @@ def select_shipment(
     Returns:
         Shipment: 배송 정보
     """
-    query = session.query(Shipment).filter_by(id=shipment_id).first()
+    query = create_read_query(session).filter(Shipment.id == shipment_id).first()
 
     if query is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -84,7 +84,7 @@ def select_shipment(
 
 @transactional
 def select_all_shipments(session: Session, sender: Sender) -> list[Shipment]:
-    query = session.query(Shipment).filter_by(sender_id=sender.id).all()
+    query = create_read_query(session).filter(Sender.id == sender.id).all()
 
     if query is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)

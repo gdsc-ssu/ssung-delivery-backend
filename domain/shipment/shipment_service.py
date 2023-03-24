@@ -5,18 +5,15 @@ from enum import Enum
 from sqlalchemy.orm import Session
 
 from domain.common.identifier import create_identifier
-from domain.crew import crew_query
-from domain.shipment import shipment_schema
+from domain.crew.crew_query import select_crew
 from domain.shipment.shipment_query import select_shipment, insert_shipment, select_all_shipments
-from domain.shipment.shipment_schema import ShipmentOut, ShipmentCreateOk
+from domain.shipment.shipment_schema import ShipmentIn, ShipmentOut, ShipmentCreateOk
 from models import Sender, Shipment
 
 
-def convert_to_shipment(
-    session: Session, schema: shipment_schema.ShipmentIn, sender: Sender
-) -> Shipment:
+def convert_to_shipment(session: Session, schema: ShipmentIn, sender: Sender) -> Shipment:
     return Shipment(
-        crew_id=crew_query.select_crew(session, "string").id,  # TODO: replace stub
+        crew_id=select_crew(session, "string").id,  # TODO: replace stub
         sender_id=sender.id,
         destination=schema.destination,
         receiver_name=schema.receiver_name,
@@ -64,7 +61,7 @@ def convert_to_shipment_create_ok(shipment_info: dict) -> ShipmentCreateOk:
 
 def create_shipment(
     session: Session,
-    orders: shipment_schema.ShipmentIn | list[shipment_schema.ShipmentIn],
+    orders: ShipmentIn | list[ShipmentIn],
     sender: Sender,
 ) -> ShipmentCreateOk | list[ShipmentCreateOk]:
     """
@@ -138,7 +135,7 @@ def read_shipment(
     try:
         # 주문번호 기반으로 조회 TODO 식별자 사용 조회
         shipment = select_shipment(session, shipment_id)
-        shipment_info = shipment.as_dict
+        shipment_info = shipment._asdict()
 
         # 전화번호 추가 검증
         if (
@@ -159,7 +156,7 @@ def read_all_shipment(
 ) -> list[ShipmentOut]:
     try:
         shipments = select_all_shipments(session, sender)
-        return [convert_to_shipment_out(shipment.as_dict) for shipment in shipments]
+        return [convert_to_shipment_out(shipment._asdict()) for shipment in shipments]
 
     except Exception as e:
         raise e

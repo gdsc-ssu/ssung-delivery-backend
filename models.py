@@ -80,10 +80,6 @@ class Shipment(Base):
         default=[status_default],
     )
 
-    @property
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
     def __repr__(self):
         return f"<Shipment id={self.id}, identifier={decode_id(self.identifier)}>"
 
