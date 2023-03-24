@@ -1,13 +1,16 @@
 import sys
 import traceback
-from typing import Callable
+from typing import Callable, TypeVar, ParamSpec
 
 from fastapi import HTTPException
 from starlette import status
 
+T = TypeVar("T")
+P = ParamSpec("P")
 
-def exception_handler(service: Callable):
-    def inner(*args, **kwargs):
+
+def exception_handler(service: Callable[P, T]):
+    def inner(*args: P.args, **kwargs: P.kwargs) -> T | dict:
         try:
             return service(*args, **kwargs) or {"ok": True}
 

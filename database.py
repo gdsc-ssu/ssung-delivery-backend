@@ -1,6 +1,8 @@
+from typing import Iterable
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 from config import settings
 
@@ -9,7 +11,7 @@ Base = declarative_base()
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def create_session():
+def create_session() -> Iterable[Session]:
     """
     DB 연결을 위한 세션을 생성 한다.
     fastapi 의존성을 위해 사용 하며 모든 api는 이 함수의 내부 에서 동작 한다.

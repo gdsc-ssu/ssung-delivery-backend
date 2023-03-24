@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Optional, TypeVar, ParamSpec
 
 from fastapi import HTTPException, Depends
 from jose import JWTError
@@ -21,12 +21,15 @@ credentials_exception = HTTPException(
 sender_scheme = OAuth2PasswordBearer(tokenUrl="/sender/login")
 crew_scheme = OAuth2PasswordBearer(tokenUrl="/crew/login")
 
+T = TypeVar("T", Sender, Crew)
+P = ParamSpec("P")
+
 
 def get_auth_entity(
-    get_entity: Callable[[Session, str], Sender | Crew | None],
+    get_entity: Callable[P, Optional[T]],
     token: str,
     session: Session,
-) -> Sender | Crew:
+) -> T:
     try:
         username = get_token_subject(token)
         if username is None:
