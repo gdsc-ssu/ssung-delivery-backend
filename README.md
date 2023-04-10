@@ -1,11 +1,16 @@
-## 🛠️ Technology & Architecture
+# SSUNG-DELIVERY-BACKEND
+![image](https://user-images.githubusercontent.com/46417868/230830852-8a8f9f31-80c8-47e3-8ae6-c14de98a821b.png)
+[Whole Project Introduction](https://github.com/gdsc-ssu/ssung-delivery)
 
+## 🛠️ Technology & Architecture
+<img width="546" alt="Screenshot 2023-04-10 at 14 07 38" src="https://user-images.githubusercontent.com/46417868/230830260-92bae2e4-6d09-49a9-9322-b3301f06143e.png">
 Our team chose FastAPI as the backend framework for our project due to its ease of use in building APIs and its support
 for asynchronous processing, allowing for efficient backend system development. Additionally, FastAPI is written in
 Python, which provides advantages in code reproducibility and development speed. We also utilized Docker containers for
 easy environment management and Cloud Run for quick deployment. For our relational database needs, we chose to use
 Google Cloud SQL, which allowed us to leverage its features such as automated backups and scalability. Finally, we used
 various GCP services such as Cloud Build and Artifact Registry for streamlined container image management.
+ 
 
 | Tech Spec | Description                                                                                                                                                                                                                                       |
 |-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -23,9 +28,10 @@ nice, clock, day" instead of the serial number "abjxk124ba7". This makes word co
 understand, and easier to remember identifiers than serial numbers. In addition, word identifiers are more secure and
 can be useful in services that handle information that is important to security.
 
-### Work Flow
+#### Work Flow
+![image](https://user-images.githubusercontent.com/46417868/230830515-10800750-01bf-4242-8d7e-0e618fd5beb7.png)
 
-### Flow
+#### Flow
 
 - Create
     1. The user registers the shipping information.
