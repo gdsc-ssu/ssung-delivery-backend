@@ -61,8 +61,8 @@ def create_read_query(session: Session) -> Query:
 
 @transactional
 def select_shipment(
-    session: Session,
-    shipment_id: int,
+        session: Session,
+        shipment_id: int | str,
 ) -> tuple:
     """
     배송 테이블에서 뱌송 번호를 기반으로 테이블을 조회합니다.
@@ -74,7 +74,34 @@ def select_shipment(
     Returns:
         Shipment: 배송 정보
     """
-    query = create_read_query(session).filter(Shipment.id == shipment_id).first()
+
+    if isinstance(shipment_id, int):
+        query = create_read_query(session).filter(Shipment.id == shipment_id).first()
+    else:
+        query = create_read_query(session).filter(Shipment.identifier == shipment_id).first()
+
+    if query is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    return query
+
+
+@transactional
+def select_shipment_entity(
+        session: Session,
+        shipment_id: int,
+) -> Shipment:
+    """
+    배송 테이블에서 뱌송 번호를 기반으로 테이블을 조회합니다.
+
+    Args:
+        session (Session): 연결 세션
+        shipment_id (str): 배송 번호
+
+    Returns:
+        Shipment: 배송 정보
+    """
+    query = session.query(Shipment).filter_by(id=shipment_id).first()
 
     if query is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -90,3 +117,13 @@ def select_all_shipments(session: Session, sender: Sender) -> list[Shipment]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     return query
+
+
+@transactional
+def update_query_shipment(session: Session, shipment_id: int, data: dict) -> Shipment:
+    query = session.query(Shipment).filter_by(id=shipment_id).update(data)
+
+    if query <= 0:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return session.query(Shipment).filter_by(id=shipment_id).first()

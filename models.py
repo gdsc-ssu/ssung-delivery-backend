@@ -1,5 +1,5 @@
-import enum
 import datetime
+import enum
 
 from sqlalchemy import Column, Integer, String, JSON, TIMESTAMP, BIGINT, Enum, ForeignKey
 from sqlalchemy.sql.expression import func
@@ -82,6 +82,10 @@ class Shipment(Base):
 
     def __repr__(self):
         return f"<Shipment id={self.id}, identifier={decode_id(self.identifier)}>"
+
+    @property
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     # content_id = Column(BIGINT, ForeignKey("contents.id"), nullable=False)
     # location = Column(String(255), nullable=False)

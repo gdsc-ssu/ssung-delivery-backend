@@ -41,3 +41,18 @@ def select_crew(session: Session, crew_id: str) -> Optional[Crew]:
         Crew, None: DB에 크루 이름을 기반 으로 탐색한 결과를 반환 합니다. 결과는 row 이거나 None 입니다.
     """
     return session.query(Crew).filter_by(crew_id=crew_id).first()
+
+
+@transactional
+def select_crew_by_pk(session: Session, pk: int) -> Optional[Crew]:
+    """
+    크루 이름을 기반 으로 DB 에서 크루 정보를 선택 합니다.
+
+    Args:
+        session (Session): DB 연결 세션 입니다.
+        crew_name (str): DB에 저장된 크루 이름
+
+    Returns:
+        Crew, None: DB에 크루 이름을 기반 으로 탐색한 결과를 반환 합니다. 결과는 row 이거나 None 입니다.
+    """
+    return session.query(Crew).filter_by(id=pk).first()

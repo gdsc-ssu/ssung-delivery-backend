@@ -12,6 +12,18 @@ class ShipmentIn(BaseModel):
     shipment_detail: Optional[str]
 
 
+class ShipmentIdIn(BaseModel):
+    identifier: str
+
+
+class ShipmentPatch(BaseModel):
+    content: Optional[str]
+    receiver_name: Optional[str]
+    receiver_phone_number: Optional[str]
+    destination: Optional[str]
+    shipment_detail: Optional[str]
+
+
 class ShipmentCreateOk(BaseModel):
     content: str
     receiver_name: str

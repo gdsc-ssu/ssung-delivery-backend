@@ -1,14 +1,17 @@
 import re
-from typing import Optional
 from enum import Enum
+from typing import Optional
 
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from starlette import status
 
 from domain.common.identifier import create_identifier
-from domain.crew.crew_query import select_crew
-from domain.shipment.shipment_query import select_shipment, insert_shipment, select_all_shipments
-from domain.shipment.shipment_schema import ShipmentIn, ShipmentOut, ShipmentCreateOk
-from models import Sender, Shipment
+from domain.crew.crew_query import select_crew, select_crew_by_pk
+from domain.shipment.shipment_query import select_shipment, insert_shipment, select_all_shipments, \
+    select_shipment_entity, update_query_shipment
+from domain.shipment.shipment_schema import ShipmentIn, ShipmentOut, ShipmentCreateOk, ShipmentPatch
+from models import Sender, Shipment, Crew
 
 
 def convert_to_shipment(session: Session, schema: ShipmentIn, sender: Sender) -> Shipment:
@@ -22,6 +25,7 @@ def convert_to_shipment(session: Session, schema: ShipmentIn, sender: Sender) ->
         shipment_detail=schema.shipment_detail,
         identifier=create_identifier(session),
     )
+
 
 
 class OutSchema(Enum):
@@ -60,9 +64,9 @@ def convert_to_shipment_create_ok(shipment_info: dict) -> ShipmentCreateOk:
 
 
 def create_shipment(
-    session: Session,
-    orders: ShipmentIn | list[ShipmentIn],
-    sender: Sender,
+        session: Session,
+        orders: ShipmentIn | list[ShipmentIn],
+        sender: Sender,
 ) -> ShipmentCreateOk | list[ShipmentCreateOk]:
     """
     배송 주문 생성을 위한 함수 입니다.
@@ -78,12 +82,13 @@ def create_shipment(
 
         for order in converted_orders:
             insert_shipment(session, order)
-            result.append(convert_to_shipment_create_ok(order.as_dict))
+            result.append(convert_to_shipment_create_ok(vars(order)))
 
     else:
         order = convert_to_shipment(session, orders, sender)
         insert_shipment(session, order)
-        result = convert_to_shipment_create_ok(order.as_dict)
+        print(order)
+        result = convert_to_shipment_create_ok(vars(order))
 
     return result
 
@@ -116,10 +121,10 @@ def masking(shipment: Shipment) -> dict:
 
 
 def read_shipment(
-    shipment_id: int,
-    receiver_name: Optional[str],
-    receiver_phone_number: Optional[str],
-    session: Session,
+        shipment_id: int | str,
+        receiver_name: Optional[str],
+        receiver_phone_number: Optional[str],
+        session: Session,
 ) -> ShipmentOut:
     """
     배송 주문 정보를 가져 오기 위한 함수 입니다. 수신자 이름의 존재 여부로 데이터의 마스킹 여부를 판단합니다.
@@ -133,14 +138,13 @@ def read_shipment(
         ShipmentOut: 배송 정보 DTO
     """
     try:
-        # 주문번호 기반으로 조회 TODO 식별자 사용 조회
         shipment = select_shipment(session, shipment_id)
         shipment_info = shipment._asdict()
 
         # 전화번호 추가 검증
         if (
-            receiver_name != shipment.receiver_name
-            or receiver_phone_number != shipment.receiver_phone_number
+                receiver_name != shipment.receiver_name
+                or receiver_phone_number != shipment.receiver_phone_number
         ):
             shipment_info = masking(shipment)
 
@@ -151,12 +155,31 @@ def read_shipment(
 
 
 def read_all_shipment(
-    sender: Sender,
-    session: Session,
+        sender: Sender,
+        session: Session,
 ) -> list[ShipmentOut]:
     try:
         shipments = select_all_shipments(session, sender)
         return [convert_to_shipment_out(shipment._asdict()) for shipment in shipments]
+
+    except Exception as e:
+        raise e
+
+
+def update_shipment(
+        shipment_id: int,
+        crew: Crew,
+        patch: ShipmentPatch,
+        session: Session,
+) -> ShipmentOut:
+    try:
+        shipment = select_shipment_entity(session, shipment_id)
+        in_charge_crew = select_crew_by_pk(session, shipment.crew_id)
+
+        if crew.crew_id != in_charge_crew.crew_id:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+        return convert_to_shipment_out(update_query_shipment(session, shipment_id, vars(patch)).as_dict)
 
     except Exception as e:
         raise e

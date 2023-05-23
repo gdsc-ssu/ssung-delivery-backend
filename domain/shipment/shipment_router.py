@@ -4,13 +4,13 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from starlette import status
 
-from authentication import get_auth_sender
+from authentication import get_auth_sender, get_auth_crew
 from database import create_session
 from domain.common.router import exception_handler
 from domain.shipment import shipment_schema, shipment_service
 from domain.shipment.shipment_query import delete_shipment
-from domain.shipment.shipment_schema import ShipmentOut, ShipmentCreateOk
-from models import Sender
+from domain.shipment.shipment_schema import ShipmentOut, ShipmentCreateOk, ShipmentPatch
+from models import Sender, Crew
 
 router = APIRouter(prefix="/shipment", tags=["shipments"])
 
@@ -42,10 +42,10 @@ async def delete(
 @exception_handler
 @router.get("/read/{shipment_id}", status_code=status.HTTP_200_OK, response_model=ShipmentOut)
 async def read(
-    shipment_id: int,
-    receiver_name: Optional[str] = None,
-    receiver_phone_number: Optional[str] = None,
-    session: Session = Depends(create_session),
+        shipment_id: int | str,
+        receiver_name: Optional[str] = None,
+        receiver_phone_number: Optional[str] = None,
+        session: Session = Depends(create_session),
 ) -> ShipmentOut:
     """
     배송 번호를 통해 배송 정보를 조회하는 api입니다.
@@ -72,9 +72,20 @@ async def read(
 @exception_handler
 @router.get("/read-all", status_code=status.HTTP_200_OK)
 async def read_all(
-    sender: Sender = Depends(get_auth_sender), session: Session = Depends(create_session)
+        sender: Sender = Depends(get_auth_sender), session: Session = Depends(create_session)
 ) -> list[ShipmentOut]:
     return shipment_service.read_all_shipment(sender, session)
+
+
+@exception_handler
+@router.patch("/update/{shipment_id}")
+async def update(
+        shipment_id: int,
+        shipment_patch: ShipmentPatch,
+        session: Session = Depends(create_session),
+        crew: Crew = Depends(get_auth_crew)
+) -> ShipmentOut:
+    return shipment_service.update_shipment(shipment_id, crew, shipment_patch, session)
 
 
 @exception_handler
