@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    links:
+      - "db:db"
+    ports:
+      - "8000:8000"
+    container_name: ssung-delivery-api
+    environment:
+      PORT: "8000"
+    depends_on:
+      - db
+  db:
+    image: mysql:latest
+    container_name: ssung-delivery-db
+    environment:
+      TZ: Asia/Seoul
+      MYSQL_DATABASE: ssung
+      MYSQL_USER: ssunguser
+      MYSQL_PASSWORD: gdssung
+      MYSQL_ROOT_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    volumes:
+      - volume:/var/lib/mysql
+      - ./ddl/table.sql:/docker-entrypoint-initdb.d/table.sql
+
+volumes:
+  volume:
