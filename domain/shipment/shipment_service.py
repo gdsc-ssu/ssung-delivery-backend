@@ -9,7 +9,7 @@ from starlette import status
 from domain.common.identifier import create_identifier
 from domain.crew.crew_query import select_crew, select_crew_by_pk
 from domain.shipment.shipment_query import select_shipment, insert_shipment, select_all_shipments, \
-    select_shipment_entity, update_query_shipment
+    select_shipment_entity, update_query_shipment, select_all_shipments_crew, select_whole_shipments
 from domain.shipment.shipment_schema import ShipmentIn, ShipmentOut, ShipmentCreateOk, ShipmentPatch
 from models import Sender, Shipment, Crew
 
@@ -160,6 +160,30 @@ def read_all_shipment(
 ) -> list[ShipmentOut]:
     try:
         shipments = select_all_shipments(session, sender)
+        return [convert_to_shipment_out(shipment._asdict()) for shipment in shipments]
+
+    except Exception as e:
+        raise e
+
+
+def read_all_shipment_crew(
+        crew: Crew,
+        session: Session,
+) -> list[ShipmentOut]:
+    try:
+        shipments = select_all_shipments_crew(session, crew)
+        return [convert_to_shipment_out(shipment._asdict()) for shipment in shipments]
+
+    except Exception as e:
+        raise e
+
+
+def read_whole_shipment(
+        crew: Crew,
+        session: Session,
+) -> list[ShipmentOut]:
+    try:
+        shipments = select_whole_shipments(session, crew)
         return [convert_to_shipment_out(shipment._asdict()) for shipment in shipments]
 
     except Exception as e:

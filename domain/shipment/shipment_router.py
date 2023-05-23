@@ -78,6 +78,22 @@ async def read_all(
 
 
 @exception_handler
+@router.get("/read-all-crew", status_code=status.HTTP_200_OK)
+async def read_all(
+        crew: Crew = Depends(get_auth_crew), session: Session = Depends(create_session)
+) -> list[ShipmentOut]:
+    return shipment_service.read_all_shipment_crew(crew, session)
+
+
+@exception_handler
+@router.get("/read-whole-crew", status_code=status.HTTP_200_OK)
+async def read_all(
+        crew: Crew = Depends(get_auth_crew), session: Session = Depends(create_session)
+) -> list[ShipmentOut]:
+    return shipment_service.read_whole_shipment(crew, session)
+
+
+@exception_handler
 @router.patch("/update/{shipment_id}")
 async def update(
         shipment_id: int,

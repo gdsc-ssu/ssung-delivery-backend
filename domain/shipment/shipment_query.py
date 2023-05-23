@@ -120,6 +120,26 @@ def select_all_shipments(session: Session, sender: Sender) -> list[Shipment]:
 
 
 @transactional
+def select_all_shipments_crew(session: Session, crew: Crew) -> list[Shipment]:
+    query = create_read_query(session).filter(Crew.id == crew.id).all()
+
+    if query is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    return query
+
+
+@transactional
+def select_whole_shipments(session: Session, crew: Crew) -> list[Shipment]:
+    query = create_read_query(session).all()
+
+    if query is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    return query
+
+
+@transactional
 def update_query_shipment(session: Session, shipment_id: int, data: dict) -> Shipment:
     query = session.query(Shipment).filter_by(id=shipment_id).update(data)
 

@@ -27,8 +27,8 @@ services:
       - "3306:3306"
     restart: unless-stopped
     volumes:
-      - volume:/var/lib/mysql
+      - ssung-db-volume:/var/lib/mysql
       - ./ddl/table.sql:/docker-entrypoint-initdb.d/table.sql
 
 volumes:
-  volume:
+  ssung-db-volume:

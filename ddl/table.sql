@@ -34,6 +34,7 @@ CREATE TABLE `crews`
     PRIMARY KEY (`id`),
     UNIQUE KEY `crew_id` (`crew_id`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -45,6 +46,13 @@ CREATE TABLE `crews`
 LOCK TABLES `crews` WRITE;
 /*!40000 ALTER TABLE `crews`
     DISABLE KEYS */;
+INSERT INTO `crews`
+VALUES (1, 'crew1', 'crew1', '$2b$12$aWJp7hBUd.5r8lti7yyBrOIniCcs5yPwOGjrdAIhfdLpfbOuwQfpq', '1', '1',
+        '2023-05-23 05:30:10'),
+       (2, 'crew2', 'crew2', '$2b$12$C18m.cfBKiOkXMSt7uFdSe4vbnsLE2TRDBnAwwBdspYQhssvTOwxW', '2', '2',
+        '2023-05-23 07:07:42'),
+       (3, 'crew3', 'crew3', '$2b$12$V8AH95q08XvT6a78HYY1se.KtHiR.ePin/WRGYVyIZFDw/MtJcFO2', '3', '3',
+        '2023-05-23 07:07:47');
 /*!40000 ALTER TABLE `crews`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -69,6 +77,7 @@ CREATE TABLE `senders`
     PRIMARY KEY (`id`),
     UNIQUE KEY `sender_id` (`sender_id`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -80,6 +89,13 @@ CREATE TABLE `senders`
 LOCK TABLES `senders` WRITE;
 /*!40000 ALTER TABLE `senders`
     DISABLE KEYS */;
+INSERT INTO `senders`
+VALUES (1, 'sender1', 'sender1', '$2b$12$62tFp6CIDCEM7mre1.N1ceIGL8qfmoMi1WXPbUM7dCl6XNoV7YSzO', '1', '1',
+        '2023-05-23 05:29:17', '2023-05-23 05:29:17'),
+       (2, 'sender2', 'sender2', '$2b$12$SwMofQelTKxBDNrQoB6GK.HKZrAHxeW7vzOH6qECrsqXiDslTadSi', '2', '2',
+        '2023-05-23 07:25:58', '2023-05-23 07:25:58'),
+       (3, 'sender3', 'sender3', '$2b$12$ci8L.E.FAd54yCQqB9160uePvTW7ux4Ya0/FJSDadDmU4Oe07QU/a', '3', '3',
+        '2023-05-23 07:26:08', '2023-05-23 07:26:08');
 /*!40000 ALTER TABLE `senders`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -113,6 +129,7 @@ CREATE TABLE `shipments`
     CONSTRAINT `shipments_ibfk_1` FOREIGN KEY (`crew_id`) REFERENCES `crews` (`id`),
     CONSTRAINT `shipments_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `senders` (`id`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 9
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -124,6 +141,71 @@ CREATE TABLE `shipments`
 LOCK TABLES `shipments` WRITE;
 /*!40000 ALTER TABLE `shipments`
     DISABLE KEYS */;
+INSERT INTO `shipments`
+VALUES (1, 1, 1, 'ordered', 'string', 'string', 'string', 'string', 'string', '2023-05-23 05:30:28', NULL,
+        '65yo64K06riwLuyKpO2OoOungS7snpHsl4XrjIA=', '[
+    {
+      \"date\": \"2023:05:23:14:29\",
+      \"status\": 0,
+      \"location\": \"Seoul\"
+    }
+  ]'),
+       (2, 1, 1, 'ordered', 'string', 'string', 'string', 'string', 'string', '2023-05-23 05:59:26', NULL,
+        '7Iqk7Lm07ZSELuygleyLoOqzvC7tjIzsmrDrjZQ=', '[
+         {
+           \"date\": \"2023:05:23:14:59\",
+           \"status\": 0,
+           \"location\": \"Seoul\"
+         }
+       ]'),
+       (3, 2, 1, 'ordered', 'string', 'string', 'string', 'string', 'string', '2023-05-23 05:59:27', NULL,
+        '6re466a87J6QLuyghOyEuOqwgC7tmozrs7XshLg=', '[
+         {
+           \"date\": \"2023:05:23:14:59\",
+           \"status\": 0,
+           \"location\": \"Seoul\"
+         }
+       ]'),
+       (4, 2, 1, 'ordered', 'string', 'string', 'string', 'string', 'string', '2023-05-23 06:00:14', NULL,
+        '6rWs66qF7KCVLuuwnOuqhe2SiC7shKDsiKDsp5E=', '[
+         {
+           \"date\": \"2023:05:23:15:00\",
+           \"status\": 0,
+           \"location\": \"Seoul\"
+         }
+       ]'),
+       (5, 2, 1, 'ordered', 'string', 'string', 'string', 'string', 'string', '2023-05-23 06:00:36', NULL,
+        '7IOd7IKs656MLuychOyVleqwkC7snpDquI3si6w=', '[
+         {
+           \"date\": \"2023:05:23:15:00\",
+           \"status\": 0,
+           \"location\": \"Seoul\"
+         }
+       ]'),
+       (6, 3, 1, 'ordered', 'string', 'string', 'string', 'string', 'string', '2023-05-23 06:01:02', NULL,
+        '6rOo64+Z7ZKILuyImeyniOqwhC7snKDsnbzsi6A=', '[
+         {
+           \"date\": \"2023:05:23:15:01\",
+           \"status\": 0,
+           \"location\": \"Seoul\"
+         }
+       ]'),
+       (7, 3, 1, 'ordered', 'string', 'string', 'string', 'string', 'string', '2023-05-23 06:01:43', NULL,
+        '6rCI66a86ri4LuyVhOuyhOuLmC7tl4jrk5zroIg=', '[
+         {
+           \"date\": \"2023:05:23:15:01\",
+           \"status\": 0,
+           \"location\": \"Seoul\"
+         }
+       ]'),
+       (8, 3, 1, 'ordered', 'string2', 'string', 'string', 'string', 'string123', '2023-05-23 06:02:06', NULL,
+        '7IaN6riw66GdLuyLoOq4sOuhnS7tmZzrj5nruYQ=', '[
+         {
+           \"date\": \"2023:05:23:15:01\",
+           \"status\": 0,
+           \"location\": \"Seoul\"
+         }
+       ]');
 /*!40000 ALTER TABLE `shipments`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -12171,4 +12253,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-23 11:23:02
+-- Dump completed on 2023-05-23 16:28:03
