@@ -203,7 +203,11 @@ def update_shipment(
         if crew.crew_id != in_charge_crew.crew_id:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
-        return convert_to_shipment_out(update_query_shipment(session, shipment_id, vars(patch)).as_dict)
+        serialize_data = vars(patch)
+        serialize_data["history"] = [vars(h) for h in patch.history]
+        print(serialize_data["history"])
+
+        return convert_to_shipment_out(update_query_shipment(session, shipment_id, serialize_data).as_dict)
 
     except Exception as e:
         raise e

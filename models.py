@@ -13,7 +13,6 @@ status_default = {
     "status": 0,
 }
 
-
 class Status(enum.Enum):
     ordered = 0
     shipping = 1

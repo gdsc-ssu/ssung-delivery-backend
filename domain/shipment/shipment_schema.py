@@ -4,6 +4,12 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class History(BaseModel):
+    date: str
+    location: str
+    status: int
+
+
 class ShipmentIn(BaseModel):
     content: str
     receiver_name: Optional[str]
@@ -22,6 +28,7 @@ class ShipmentPatch(BaseModel):
     receiver_phone_number: Optional[str]
     destination: Optional[str]
     shipment_detail: Optional[str]
+    history: list[History]
 
 
 class ShipmentCreateOk(BaseModel):
